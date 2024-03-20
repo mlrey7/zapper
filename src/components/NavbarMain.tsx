@@ -19,11 +19,11 @@ const NavbarMain = () => {
   return (
     <NavigationMenu
       orientation="vertical"
-      className="max-w-full justify-start flex flex-col"
+      className="flex max-w-full flex-col justify-start"
     >
       <NavigationMenuList className="flex-col items-start gap-y-4">
         <NavigationMenuItem>
-          <Link href="/" legacyBehavior passHref>
+          <Link href="/home" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               <Zap className="h-9 w-9" />
             </NavigationMenuLink>
@@ -31,7 +31,7 @@ const NavbarMain = () => {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <Link href="/" legacyBehavior passHref>
+          <Link href="/home" legacyBehavior passHref>
             <NavigationMenuLink
               className={cn([
                 navigationMenuTriggerStyle(),
@@ -39,7 +39,7 @@ const NavbarMain = () => {
               ])}
               active={pathname === "/home"}
             >
-              <Home className="w-8 h-8 mr-2" />
+              <Home className="mr-2 h-8 w-8" />
               <span className="text-lg">Home</span>
             </NavigationMenuLink>
           </Link>
@@ -54,7 +54,7 @@ const NavbarMain = () => {
               ])}
               active={pathname === "/search"}
             >
-              <Search className="w-8 h-8 mr-2" />
+              <Search className="mr-2 h-8 w-8" />
               <span className="text-lg">Explore</span>
             </NavigationMenuLink>
           </Link>
@@ -69,7 +69,7 @@ const NavbarMain = () => {
               ])}
               active={pathname === "/notifications"}
             >
-              <Bell className="w-8 h-8 mr-2" />
+              <Bell className="mr-2 h-8 w-8" />
               <span className="text-lg">Notifications</span>
             </NavigationMenuLink>
           </Link>
@@ -84,12 +84,12 @@ const NavbarMain = () => {
               ])}
               active={pathname === "/messages"}
             >
-              <Mail className="w-8 h-8 mr-2" />
+              <Mail className="mr-2 h-8 w-8" />
               <span className="text-lg">Messages</span>
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
-        <NavigationMenuItem className="w-full mt-4">
+        <NavigationMenuItem className="mt-4 w-full">
           <Button className="w-full font-bold">Post</Button>
         </NavigationMenuItem>
       </NavigationMenuList>

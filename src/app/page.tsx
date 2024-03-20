@@ -1,19 +1,25 @@
 import SignIn from "@/components/SignIn";
+import { getAuthSession } from "@/lib/auth";
 import { Zap } from "lucide-react";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getAuthSession();
+
+  if (session) redirect("/home");
+
   return (
-    <main className="grid grid-cols-12 h-screen">
-      <div className="col-span-6 flex justify-center items-center">
+    <main className="grid h-screen grid-cols-12">
+      <div className="col-span-6 flex items-center justify-center">
         <Zap className="h-[24rem] w-[24rem]" />
       </div>
       <div className="col-span-6 flex items-center">
         <div className="flex flex-col px-24">
-          <h1 className="font-extrabold text-[4rem] mb-12 tracking-tight">
+          <h1 className="mb-12 text-[4rem] font-extrabold tracking-tight">
             Happening now
           </h1>
-          <div className="flex flex-col w-72">
-            <h6 className="text-3xl mb-4 font-extrabold">Join today.</h6>
+          <div className="flex w-72 flex-col">
+            <h6 className="mb-4 text-3xl font-extrabold">Join today.</h6>
             <SignIn />
             <p className="text-xs text-slate-500">
               By signing up, you agree to the Terms of Service and Privacy
