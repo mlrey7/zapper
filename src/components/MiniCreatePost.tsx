@@ -126,7 +126,7 @@ const MiniCreatePost = ({ user }: MiniCreatePostProps) => {
     : [];
 
   return (
-    <div className="flex w-full items-start border-b p-3">
+    <div className="flex w-full items-start border-b p-4">
       <UserAvatar user={user} className="mr-1" />
       <div className="flex w-full flex-col pt-1.5">
         <TextareaAutosize

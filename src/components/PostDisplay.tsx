@@ -13,7 +13,7 @@ const PostDisplay = ({ post }: PostDisplayProps) => {
   const postContent = PostContentValidator.safeParse(post.content);
 
   return (
-    <div className="flex items-start gap-3 border-b p-3">
+    <div className="flex items-start gap-3 border-b p-4">
       <UserAvatar user={post.author} />
       <div className="flex w-full flex-col overflow-hidden">
         <div className="flex items-center gap-1">
@@ -27,11 +27,9 @@ const PostDisplay = ({ post }: PostDisplayProps) => {
         <p className="w-full text-wrap break-words text-sm">
           {postContent.success ? postContent.data.text : "Error"}
         </p>
-        <div className="pt-3">
-          <PostImageDisplay
-            images={postContent.success ? postContent.data.images : []}
-          />
-        </div>
+        <PostImageDisplay
+          images={postContent.success ? postContent.data.images : []}
+        />
       </div>
     </div>
   );

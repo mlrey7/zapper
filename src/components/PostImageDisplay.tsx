@@ -5,8 +5,10 @@ interface PostImageDisplayProps {
   images: Array<string>;
 }
 const PostImageDisplay = ({ images }: PostImageDisplayProps) => {
+  if (images.length === 0) return null;
+
   return (
-    <div>
+    <div className="pt-3">
       {images.length === 1 && (
         <Image
           src={images[0]}

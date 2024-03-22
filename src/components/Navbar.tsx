@@ -8,9 +8,9 @@ const Navbar = async () => {
   const session = await getAuthSession();
 
   return (
-    <div className="col-span-3 flex flex-col justify-between py-4 pl-8">
+    <div className="fixed ml-20 flex flex-col gap-12 py-4">
       <NavbarMain />
-      <div className="flex items-center justify-between pl-6 pr-8">
+      <div className="flex items-center justify-between">
         <div className="flex ">
           <UserAvatar
             user={{

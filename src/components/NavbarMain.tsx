@@ -19,9 +19,9 @@ const NavbarMain = () => {
   return (
     <NavigationMenu
       orientation="vertical"
-      className="flex max-w-full flex-col justify-start"
+      className="flex w-full flex-col justify-start"
     >
-      <NavigationMenuList className="flex-col items-start gap-y-4">
+      <NavigationMenuList className="w-full flex-col items-start gap-y-4">
         <NavigationMenuItem>
           <Link href="/home" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
