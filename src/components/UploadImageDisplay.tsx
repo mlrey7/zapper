@@ -1,7 +1,10 @@
 import Image from "next/image";
 import LoadingImage from "./LoadingImage";
 import UploadImageCarousel from "./UploadImageCarousel";
-import { memo } from "react";
+import { memo, useContext } from "react";
+import { Button } from "./ui/button";
+import { X } from "lucide-react";
+import { OnDeleteImageContext } from "./MiniCreatePost";
 
 interface UploadImageDisplayProps {
   isUploading: boolean;
@@ -10,7 +13,7 @@ interface UploadImageDisplayProps {
   localImages: Array<File>;
 }
 
-const UploadImageDisplay = memo(function x({
+const UploadImageDisplay = memo(function UploadImageD({
   isUploading,
   localImageSize,
   localImagesUploadQueue,
@@ -22,6 +25,8 @@ const UploadImageDisplay = memo(function x({
   const localImagesUploadQueueUrls = localImagesUploadQueue.map((l) =>
     URL.createObjectURL(l),
   );
+
+  const onDeleteImage = useContext(OnDeleteImageContext);
 
   return (
     <div className="mt-2 flex">
@@ -46,7 +51,14 @@ const UploadImageDisplay = memo(function x({
       ) : null}
 
       {!isUploading && localImages.length === 1 ? (
-        <div className="w-full">
+        <div className="relative w-full">
+          <Button
+            className="absolute right-2 top-2 rounded-full bg-gray-800/80 hover:bg-gray-600/80"
+            size={"icon"}
+            onClick={() => onDeleteImage(0)}
+          >
+            <X className="h-4 w-4 text-white" />
+          </Button>
           <Image
             src={localImagesUrls[0]}
             alt="Uploaded Image"

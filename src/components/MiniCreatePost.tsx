@@ -11,7 +11,7 @@ import {
   MapPin,
   Smile,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { createContext, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { Separator } from "./ui/separator";
 import { Button, buttonVariants } from "./ui/button";
@@ -30,6 +30,11 @@ interface Size {
   width: number;
   height: number;
 }
+
+type onDelete = (index: number) => void;
+
+export const OnDeleteImageContext = createContext<onDelete>(() => {});
+
 const MiniCreatePost = ({ user }: MiniCreatePostProps) => {
   const [text, setText] = useState("");
   const [images, setImages] = useState<Array<string>>([]);
@@ -39,6 +44,11 @@ const MiniCreatePost = ({ user }: MiniCreatePostProps) => {
   >([]);
   const [localImageSize, setLocalImageSize] = useState<Size | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+
+  const onDeleteImage = (index: number) => {
+    setLocalImages(localImages.filter((_, idx) => index !== idx));
+    setImages(images.filter((_, idx) => index !== idx));
+  };
 
   const { mutate: createPost, isPending } = useMutation({
     mutationFn: async ({
@@ -121,12 +131,15 @@ const MiniCreatePost = ({ user }: MiniCreatePostProps) => {
           onChange={(e) => setText(e.target.value)}
           className="flex min-h-[40px] w-full resize-none rounded-md bg-background px-2 text-xl outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
         />
-        <UploadImageDisplay
-          isUploading={isUploading}
-          localImageSize={localImageSize}
-          localImages={localImages}
-          localImagesUploadQueue={localImagesUploadQueue}
-        />
+        <OnDeleteImageContext.Provider value={onDeleteImage}>
+          <UploadImageDisplay
+            isUploading={isUploading}
+            localImageSize={localImageSize}
+            localImages={localImages}
+            localImagesUploadQueue={localImagesUploadQueue}
+          />
+        </OnDeleteImageContext.Provider>
+
         <Button
           className="w-fit px-2 font-medium text-blue-500 hover:text-blue-500"
           variant={"ghost"}

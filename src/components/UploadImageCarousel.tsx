@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { CircleX, Loader2, X } from "lucide-react";
 import LoadingImage from "./LoadingImage";
 import {
   Carousel,
@@ -10,6 +10,9 @@ import {
   CarouselNext,
 } from "./ui/carousel";
 import Image from "next/image";
+import { Button } from "./ui/button";
+import { useContext } from "react";
+import { OnDeleteImageContext } from "./MiniCreatePost";
 
 const UploadImageCarousel = ({
   imageUrls,
@@ -20,6 +23,8 @@ const UploadImageCarousel = ({
   imageUrlsQueue: Array<string>;
   localImageSize: { width: number; height: number };
 }) => {
+  const onDeleteImage = useContext(OnDeleteImageContext);
+
   return (
     <div className="w-full">
       <Carousel
@@ -28,8 +33,15 @@ const UploadImageCarousel = ({
         }}
       >
         <CarouselContent>
-          {...imageUrls.map((imageUrl) => (
-            <CarouselItem key={imageUrl} className="basis-1/2">
+          {...imageUrls.map((imageUrl, index) => (
+            <CarouselItem key={imageUrl} className="relative basis-1/2">
+              <Button
+                className="absolute right-2 top-2 rounded-full bg-gray-800/80 hover:bg-gray-600/80"
+                size={"icon"}
+                onClick={() => onDeleteImage(index)}
+              >
+                <X className="h-4 w-4 text-white" />
+              </Button>
               <Image
                 src={imageUrl}
                 alt="Uploaded Image"
