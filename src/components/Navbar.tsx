@@ -8,9 +8,9 @@ const Navbar = async () => {
   const session = await getAuthSession();
 
   return (
-    <div className="py-4 col-span-3 flex flex-col justify-between pl-8">
+    <div className="col-span-3 flex flex-col justify-between py-4 pl-8">
       <NavbarMain />
-      <div className="flex justify-between items-center pl-6 pr-8">
+      <div className="flex items-center justify-between pl-6 pr-8">
         <div className="flex ">
           <UserAvatar
             user={{
@@ -18,12 +18,12 @@ const Navbar = async () => {
               image: session?.user.image,
             }}
           />
-          <div className="flex flex-col ml-2 gap-0.5">
-            <p className="font-bold text-sm">{session?.user.name}</p>
-            <p className="text-slate-500 text-xs">@{session?.user.username}</p>
+          <div className="ml-2 flex flex-col gap-0.5">
+            <p className="text-sm font-bold">{session?.user.name}</p>
+            <p className="text-xs text-slate-500">@{session?.user.username}</p>
           </div>
         </div>
-        <Ellipsis className="w-4 h-4" />
+        <Ellipsis className="h-4 w-4" />
       </div>
     </div>
   );

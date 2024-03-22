@@ -22,6 +22,7 @@ import { toast } from "@/hooks/use-toast";
 import { useUploadThing } from "@/lib/uploadthing";
 import { generateMimeTypes } from "uploadthing/client";
 import UploadImageDisplay from "./UploadImageDisplay";
+import { useRouter } from "next/navigation";
 interface MiniCreatePostProps {
   user: Pick<User, "name" | "image">;
 }
@@ -44,6 +45,8 @@ const MiniCreatePost = ({ user }: MiniCreatePostProps) => {
   >([]);
   const [localImageSize, setLocalImageSize] = useState<Size | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+
+  const router = useRouter();
 
   const onDeleteImage = (index: number) => {
     setLocalImages(localImages.filter((_, idx) => index !== idx));
@@ -78,6 +81,7 @@ const MiniCreatePost = ({ user }: MiniCreatePostProps) => {
       setLocalImages([]);
       setLocalImagesUploadQueue([]);
       setLocalImageSize(null);
+      router.refresh();
 
       return toast({
         title: "Success",
