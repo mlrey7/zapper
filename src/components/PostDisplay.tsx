@@ -4,6 +4,8 @@ import UserAvatar from "./UserAvatar";
 import { formatTimeToNow } from "@/lib/utils";
 import { PostContentValidator, PostValidator } from "@/lib/validators/post";
 import PostImageDisplay from "./PostImageDisplay";
+import PostInteraction from "./PostInteraction";
+import PostDisplayMoreOptions from "./PostDisplayMoreOptions";
 
 interface PostDisplayProps {
   post: ExtendedPost;
@@ -13,7 +15,7 @@ const PostDisplay = ({ post }: PostDisplayProps) => {
   const postContent = PostContentValidator.safeParse(post.content);
 
   return (
-    <div className="flex items-start gap-3 border-b p-4">
+    <div className="flex items-start gap-3 border-b px-4 py-3">
       <UserAvatar user={post.author} />
       <div className="flex w-full flex-col overflow-hidden">
         <div className="flex items-center gap-1">
@@ -23,12 +25,20 @@ const PostDisplay = ({ post }: PostDisplayProps) => {
           <p className="text-sm text-gray-600">
             {formatTimeToNow(new Date(post.createdAt))}
           </p>
+          <div className="flex-1" />
+          <PostDisplayMoreOptions />
         </div>
         <p className="w-full text-wrap break-words text-sm">
           {postContent.success ? postContent.data.text : "Error"}
         </p>
         <PostImageDisplay
           images={postContent.success ? postContent.data.images : []}
+        />
+        <PostInteraction
+          initialRepliesAmount={post.replies.length}
+          initialLikesAmount={post.likes.length}
+          initialRetweetsAmount={post.retweets.length}
+          postId={post.id}
         />
       </div>
     </div>
