@@ -1,9 +1,16 @@
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({
+  children,
+  postModal,
+}: {
+  children: React.ReactNode;
+  postModal: React.ReactNode;
+}) => {
   return (
     <div className="container grid grid-cols-12">
+      {postModal}
       <div className="col-span-3">
         <Navbar />
       </div>

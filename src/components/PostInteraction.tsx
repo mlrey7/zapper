@@ -8,7 +8,7 @@ import {
   Repeat,
   Upload,
 } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -16,6 +16,7 @@ import { PostLikeRequest } from "@/lib/validators/like";
 import { boolean } from "zod";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import Link from "next/link";
 
 interface PostInteractionProps {
   postId: string;
@@ -91,10 +92,13 @@ const PostInteraction = ({
 
   return (
     <div className="mt-3 flex justify-between">
-      <Button variant={"ghost"} size={"icon"}>
+      <Link
+        className={buttonVariants({ variant: "ghost", size: "icon" })}
+        href={"/compose/post"}
+      >
         <MessageCircle className="mr-1 h-4 w-4 text-gray-600" />
         <p className="text-xs text-gray-600">{repliesAmount}</p>
-      </Button>
+      </Link>
       <Button variant={"ghost"} size={"icon"}>
         <Repeat className="mr-1 h-4 w-4 text-gray-600" />
         <p className="text-xs text-gray-600">{retweetsAmount}</p>
