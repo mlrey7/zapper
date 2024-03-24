@@ -11,10 +11,11 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "./ui/navigation-menu";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const NavbarMain = () => {
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <NavigationMenu
@@ -90,7 +91,14 @@ const NavbarMain = () => {
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem className="mt-4 w-full">
-          <Button className="w-full font-bold">Post</Button>
+          <Button
+            className="w-full font-bold"
+            onClick={() => {
+              router.push("/compose/post");
+            }}
+          >
+            Post
+          </Button>
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>

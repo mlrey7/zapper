@@ -1,4 +1,3 @@
-import CloseModal from "@/components/CloseModal";
 import ModalCreatePost from "@/components/ModalCreatePost";
 import { getAuthSession } from "@/lib/auth";
 import React from "react";
