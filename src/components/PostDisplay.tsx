@@ -6,13 +6,19 @@ import { PostContentValidator, PostValidator } from "@/lib/validators/post";
 import PostImageDisplay from "./PostImageDisplay";
 import PostInteraction from "./PostInteraction";
 import PostDisplayMoreOptions from "./PostDisplayMoreOptions";
+import { getAuthSession } from "@/lib/auth";
 
 interface PostDisplayProps {
   post: ExtendedPost;
 }
 
-const PostDisplay = ({ post }: PostDisplayProps) => {
+const PostDisplay = async ({ post }: PostDisplayProps) => {
+  const session = await getAuthSession();
+
   const postContent = PostContentValidator.safeParse(post.content);
+  const currentLike = !!post.likes.find(
+    (like) => like.userId === session?.user.id,
+  );
 
   return (
     <div className="flex items-start gap-3 border-b px-4 py-3">
@@ -39,6 +45,7 @@ const PostDisplay = ({ post }: PostDisplayProps) => {
           initialLikesAmount={post.likes.length}
           initialRetweetsAmount={post.retweets.length}
           postId={post.id}
+          initialLike={currentLike}
         />
       </div>
     </div>
