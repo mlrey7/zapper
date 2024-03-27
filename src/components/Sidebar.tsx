@@ -1,5 +1,4 @@
 import React from "react";
-import Searchbar from "./Searchbar";
 import { Ellipsis } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -54,8 +53,7 @@ const trends: Array<TrendData> = [
 
 const Sidebar = () => {
   return (
-    <div className="fixed flex flex-col gap-4 px-8 py-2">
-      <Searchbar />
+    <div className="mt-16 flex flex-col gap-4 py-2 pl-8">
       <div className="rounded-lg bg-slate-800 px-4 py-4">
         <h2 className="mb-4 text-xl font-bold">Trends for you</h2>
         <div className="flex flex-col gap-4">

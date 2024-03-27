@@ -49,7 +49,7 @@ const Page = async () => {
   // })
 
   return (
-    <div className="flex min-h-screen flex-col items-center">
+    <div className="mt-16 flex min-h-screen flex-col items-center">
       <MiniCreatePost
         user={{
           name: session?.user.name ?? "",

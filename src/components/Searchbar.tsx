@@ -1,7 +1,5 @@
 "use client";
 
-import { Search } from "lucide-react";
-import { Input } from "./ui/input";
 import {
   Command,
   CommandEmpty,
@@ -17,7 +15,7 @@ const Searchbar = () => {
   const [input, setInput] = useState("");
 
   return (
-    <div className="relative">
+    <div className="bg-background py-2 pl-8">
       <Command className="max-w-lg border bg-slate-800 focus-within:border-primary focus-within:bg-background">
         <CommandInput placeholder="Search" size={32} />
         {input.length > 0 && (
