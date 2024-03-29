@@ -2,7 +2,7 @@
 "use client";
 
 import UserAvatar from "./UserAvatar";
-import { User } from "@prisma/client";
+import { Post, User } from "@prisma/client";
 import {
   CalendarClock,
   Earth,
@@ -16,7 +16,10 @@ import TextareaAutosize from "react-textarea-autosize";
 import { Separator } from "./ui/separator";
 import { Button, buttonVariants } from "./ui/button";
 import { useMutation } from "@tanstack/react-query";
-import { PostCreationRequest } from "@/lib/validators/post";
+import {
+  PostContentValidator,
+  PostCreationRequest,
+} from "@/lib/validators/post";
 import axios, { AxiosError } from "axios";
 import { toast } from "@/hooks/use-toast";
 import { useUploadThing } from "@/lib/uploadthing";
@@ -25,11 +28,12 @@ import UploadImageDisplay from "./UploadImageDisplay";
 import { useRouter } from "next/navigation";
 import CloseModal from "./CloseModal";
 import { useClickOutside } from "@mantine/hooks";
-import { ExtendedPost } from "@/types/db";
+import { ExtendedPost, PostAndAuthor } from "@/types/db";
 import { formatTimeToNow } from "@/lib/utils";
 
 interface ModalCreatePostProps {
   user: Pick<User, "name" | "image">;
+  replyToPost: PostAndAuthor | null;
 }
 
 interface Size {
@@ -41,7 +45,7 @@ type onDelete = (index: number) => void;
 
 export const OnDeleteImageContext = createContext<onDelete>(() => {});
 
-const ModalCreatePost = ({ user }: ModalCreatePostProps) => {
+const ModalCreatePost = ({ user, replyToPost }: ModalCreatePostProps) => {
   const [text, setText] = useState("");
   const [images, setImages] = useState<Array<string>>([]);
   const [localImages, setLocalImages] = useState<Array<File>>([]);
@@ -53,9 +57,10 @@ const ModalCreatePost = ({ user }: ModalCreatePostProps) => {
 
   const router = useRouter();
 
-  // const replyPost: ExtendedPost = {
-  //   author
-  // }
+  const replyToPostContent = PostContentValidator.safeParse(
+    replyToPost?.content,
+  );
+
   const onDeleteImage = (index: number) => {
     setLocalImages(localImages.filter((_, idx) => index !== idx));
     setImages(images.filter((_, idx) => index !== idx));
@@ -93,7 +98,7 @@ const ModalCreatePost = ({ user }: ModalCreatePostProps) => {
       setLocalImages([]);
       setLocalImagesUploadQueue([]);
       setLocalImageSize(null);
-      router.refresh();
+      router.back();
 
       return toast({
         title: "Success",
@@ -108,6 +113,7 @@ const ModalCreatePost = ({ user }: ModalCreatePostProps) => {
         text,
         images,
       },
+      replyToId: replyToPost?.id,
     });
   };
 
@@ -144,40 +150,50 @@ const ModalCreatePost = ({ user }: ModalCreatePostProps) => {
     >
       <CloseModal />
       <div className="flex w-full flex-col pt-1.5">
-        <div className="relative flex items-start gap-3 before:absolute before:left-0 before:top-11 before:ml-[1.25rem] before:h-full before:-translate-x-1/2 before:self-start before:bg-gray-600 before:px-px">
-          <UserAvatar user={user} />
-          <div className="flex w-full flex-col overflow-hidden">
-            <div className="flex items-center gap-1">
-              <h6 className="text-sm font-bold">
-                SampleReplyName
-                {/* {replyPost.author.name} */}
-              </h6>
-              <p className="text-sm text-gray-600">
-                @sampleReplyAuthorUsername
-                {/* @{replyPost.author.username} */}
-              </p>
-              <span className="text-sm text-gray-600">•</span>
-              <p className="text-sm text-gray-600">
-                {formatTimeToNow(new Date())}
-                {/* {formatTimeToNow(new Date(replyPost.createdAt))} */}
-              </p>
+        {!!replyToPost && (
+          <>
+            <div className="relative flex items-start gap-3 before:absolute before:left-0 before:top-11 before:ml-[1.25rem] before:h-full before:-translate-x-1/2 before:self-start before:bg-gray-600 before:px-px">
+              <UserAvatar user={replyToPost.author} />
+              <div className="flex w-full flex-col overflow-hidden">
+                <div className="flex items-center gap-1">
+                  <h6 className="text-sm font-bold">
+                    {replyToPost.author.name}
+                  </h6>
+                  <p className="text-sm text-gray-600">
+                    @{replyToPost.author.username}
+                  </p>
+                  <span className="text-sm text-gray-600">•</span>
+                  <p className="text-sm text-gray-600">
+                    {formatTimeToNow(new Date(replyToPost.createdAt))}
+                  </p>
+                </div>
+                <p className="w-full text-wrap break-words text-sm">
+                  {replyToPostContent.success && (
+                    <>
+                      {replyToPostContent.data.text}
+                      {replyToPostContent.data.images.length && <br />}
+                      {replyToPostContent.data.images.join(" ")}
+                    </>
+                  )}
+                </p>
+              </div>
             </div>
-            <p className="w-full text-wrap break-words text-sm">
-              Sample test test
-              {/* {replyPostContent.success ? replyPostContent.data.text : "Error"} */}
+            <p className="mb-6 ml-10 mt-3 pl-3 text-sm text-gray-600">
+              Replying to{" "}
+              <span className="text-blue-500">
+                @{replyToPost.author.username}
+              </span>
             </p>
-          </div>
-        </div>
-        <p className="ml-10 mt-3 pl-3 text-sm text-gray-600">
-          Replying to{" "}
-          <span className="text-blue-500">@sampleReplyAuthorUsername</span>
-        </p>
+          </>
+        )}
 
-        <div className="mt-6 flex">
+        <div className="flex">
           <UserAvatar user={user} className="mr-1" />
           <TextareaAutosize
             value={text}
-            placeholder="Post your reply"
+            placeholder={
+              !!replyToPost ? "Post your reply" : "What is happening?!"
+            }
             minRows={4}
             onChange={(e) => setText(e.target.value)}
             className="mt-1 flex min-h-[40px] w-full resize-none rounded-md bg-background px-2 text-xl outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
@@ -192,6 +208,20 @@ const ModalCreatePost = ({ user }: ModalCreatePostProps) => {
             localImagesUploadQueue={localImagesUploadQueue}
           />
         </OnDeleteImageContext.Provider>
+        {!replyToPost && (
+          <>
+            <Button
+              className="w-fit px-2 font-medium text-blue-500 hover:text-blue-500"
+              variant={"ghost"}
+              size={"sm"}
+            >
+              <Earth className="mr-1 h-4 w-4 text-sm" />
+              Everyone can reply
+            </Button>
+            <Separator className="my-3" />
+          </>
+        )}
+
         <div className="flex items-center">
           <label
             className={buttonVariants({
@@ -241,7 +271,7 @@ const ModalCreatePost = ({ user }: ModalCreatePostProps) => {
             isLoading={isPending}
             disabled={isUploading || (text.length === 0 && images.length === 0)}
           >
-            Reply
+            {!!replyToPost ? "Reply" : "Post"}
           </Button>
         </div>
       </div>

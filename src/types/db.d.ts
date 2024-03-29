@@ -6,3 +6,7 @@ export type ExtendedPost = Post & {
   replies: Array<Post>;
   retweets: Array<Retweet>;
 };
+
+export type PostAndAuthor = Post & {
+  author: Pick<User, "name" | "username" | "image">;
+};

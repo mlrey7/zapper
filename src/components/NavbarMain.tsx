@@ -94,7 +94,9 @@ const NavbarMain = () => {
           <Button
             className="w-full font-bold"
             onClick={() => {
-              router.push("/compose/post");
+              router.push("/compose/post", {
+                scroll: false,
+              });
             }}
           >
             Post

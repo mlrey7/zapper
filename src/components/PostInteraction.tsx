@@ -94,7 +94,13 @@ const PostInteraction = ({
     <div className="mt-3 flex justify-between">
       <Link
         className={buttonVariants({ variant: "ghost", size: "icon" })}
-        href={"/compose/post"}
+        href={{
+          pathname: "/compose/post",
+          query: {
+            replyTo: postId,
+          },
+        }}
+        scroll={false}
       >
         <MessageCircle className="mr-1 h-4 w-4 text-gray-600" />
         <p className="text-xs text-gray-600">{repliesAmount}</p>
