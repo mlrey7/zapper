@@ -39,16 +39,20 @@ const PostDisplay = async ({ post }: PostDisplayProps) => {
           <p className="w-full text-wrap break-words text-sm">
             {postContent.success ? postContent.data.text : "Error"}
           </p>
-          <PostImageDisplay
-            images={postContent.success ? postContent.data.images : []}
-          />
-          <PostInteraction
-            initialRepliesAmount={post.replies.length}
-            initialLikesAmount={post.likes.length}
-            initialRetweetsAmount={post.retweets.length}
-            postId={post.id}
-            initialLike={currentLike}
-          />
+          <div className="mt-4">
+            <PostImageDisplay
+              images={postContent.success ? postContent.data.images : []}
+            />
+          </div>
+          <div className="mt-3">
+            <PostInteraction
+              initialRepliesAmount={post.replies.length}
+              initialLikesAmount={post.likes.length}
+              initialRetweetsAmount={post.retweets.length}
+              postId={post.id}
+              initialLike={currentLike}
+            />
+          </div>
         </div>
       </div>
     </Link>

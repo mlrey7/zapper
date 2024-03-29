@@ -8,7 +8,7 @@ const PostImageDisplay = ({ images }: PostImageDisplayProps) => {
   if (images.length === 0) return null;
 
   return (
-    <div className="pt-3">
+    <div>
       {images.length === 1 && (
         <Image
           src={images[0]}

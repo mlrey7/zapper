@@ -93,7 +93,7 @@ const PostInteraction = ({
   };
 
   return (
-    <div className="mt-3 flex justify-between">
+    <div className="flex justify-between">
       {/* <Button
         variant={"ghost"}
         size={"icon"}
