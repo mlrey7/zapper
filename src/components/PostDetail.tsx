@@ -1,5 +1,4 @@
 import { getAuthSession } from "@/lib/auth";
-import { formatTimeToNow } from "@/lib/utils";
 import { PostContentValidator } from "@/lib/validators/post";
 import { ExtendedPost } from "@/types/db";
 import React from "react";

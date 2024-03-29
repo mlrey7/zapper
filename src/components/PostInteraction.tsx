@@ -137,7 +137,9 @@ const PostInteraction = ({
       </Button>
       <Button variant={"ghost"} size={"icon"}>
         <BarChart className="mr-1 h-4 w-4 text-gray-600" />
-        <p className="text-xs text-gray-600">{repliesAmount}</p>
+        <p className="text-xs text-gray-600">
+          {repliesAmount + likesAmount + retweetsAmount}
+        </p>
       </Button>
       <div className="flex">
         <Button variant={"ghost"} size={"icon"}>
