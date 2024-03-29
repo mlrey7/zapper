@@ -12,6 +12,9 @@ const Page = async () => {
   if (!session) redirect("/");
 
   const posts = await db.post.findMany({
+    where: {
+      replyToId: null,
+    },
     take: INFINITE_SCROLLING_PAGINATION_RESULTS,
     orderBy: {
       createdAt: "desc",

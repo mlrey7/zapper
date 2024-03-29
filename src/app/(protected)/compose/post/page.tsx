@@ -28,6 +28,9 @@ const Page = async ({
     : null;
 
   const posts = await db.post.findMany({
+    where: {
+      replyToId: null,
+    },
     take: INFINITE_SCROLLING_PAGINATION_RESULTS,
     orderBy: {
       createdAt: "desc",
