@@ -17,6 +17,7 @@ import { boolean } from "zod";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface PostInteractionProps {
   postId: string;
@@ -37,6 +38,7 @@ const PostInteraction = ({
   const [likesAmount, setLikesAmount] = useState(initialLikesAmount);
   const [retweetsAmount, setRetweetsAmount] = useState(initialRetweetsAmount);
   const [currentLike, setCurrentLike] = useState(initialLike);
+  const router = useRouter();
 
   const { mutate: like } = useMutation({
     mutationFn: async () => {
@@ -92,6 +94,16 @@ const PostInteraction = ({
 
   return (
     <div className="mt-3 flex justify-between">
+      {/* <Button
+        variant={"ghost"}
+        size={"icon"}
+        onClick={() => {
+          router.push(`/compose/post?replyTo=${postId}`, { scroll: false });
+        }}
+      >
+        <MessageCircle className="mr-1 h-4 w-4 text-gray-600" />
+        <p className="text-xs text-gray-600">{repliesAmount}</p>
+      </Button> */}
       <Link
         className={buttonVariants({ variant: "ghost", size: "icon" })}
         href={{

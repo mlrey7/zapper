@@ -11,7 +11,7 @@ const FeedSwitch = () => {
   const [feedStatus, setFeedStatus] = useState<FeedStatusType>("all");
 
   return (
-    <div className="flex h-full w-full items-center">
+    <div className="flex h-full w-full items-center border-b">
       <div
         className={cn(
           buttonVariants({ variant: "ghost" }),

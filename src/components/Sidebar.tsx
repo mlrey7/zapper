@@ -11,42 +11,42 @@ interface TrendData {
 const trends: Array<TrendData> = [
   {
     category: "Gaming",
-    hashtag: "#LoremIpsum",
+    hashtag: "#LoremIpsum1",
     postCountK: 21,
   },
   {
     category: "Sports",
-    hashtag: "#LoremIpsum",
+    hashtag: "#LoremIpsum2",
     postCountK: 324,
   },
   {
     category: "Technology",
-    hashtag: "#LoremIpsum",
+    hashtag: "#LoremIpsum3",
     postCountK: 230,
   },
   {
     category: "Entertainment",
-    hashtag: "#LoremIpsum",
+    hashtag: "#LoremIpsum4",
     postCountK: 89,
   },
   {
     category: "Gaming",
-    hashtag: "#LoremIpsum",
+    hashtag: "#LoremIpsum5",
     postCountK: 21,
   },
   {
     category: "Sports",
-    hashtag: "#LoremIpsum",
+    hashtag: "#LoremIpsum6",
     postCountK: 324,
   },
   {
     category: "Technology",
-    hashtag: "#LoremIpsum",
+    hashtag: "#LoremIpsum7",
     postCountK: 230,
   },
   {
     category: "Entertainment",
-    hashtag: "#LoremIpsum",
+    hashtag: "#LoremIpsum8",
     postCountK: 89,
   },
 ];
