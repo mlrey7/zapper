@@ -25,6 +25,8 @@ import UploadImageDisplay from "./UploadImageDisplay";
 import { useRouter } from "next/navigation";
 import CloseModal from "./CloseModal";
 import { useClickOutside } from "@mantine/hooks";
+import { ExtendedPost } from "@/types/db";
+import { formatTimeToNow } from "@/lib/utils";
 
 interface ModalCreatePostProps {
   user: Pick<User, "name" | "image">;
@@ -51,6 +53,9 @@ const ModalCreatePost = ({ user }: ModalCreatePostProps) => {
 
   const router = useRouter();
 
+  // const replyPost: ExtendedPost = {
+  //   author
+  // }
   const onDeleteImage = (index: number) => {
     setLocalImages(localImages.filter((_, idx) => index !== idx));
     setImages(images.filter((_, idx) => index !== idx));
@@ -139,11 +144,40 @@ const ModalCreatePost = ({ user }: ModalCreatePostProps) => {
     >
       <CloseModal />
       <div className="flex w-full flex-col pt-1.5">
-        <div className="flex">
+        <div className="relative flex items-start gap-3 before:absolute before:left-0 before:top-11 before:ml-[1.25rem] before:h-full before:-translate-x-1/2 before:self-start before:bg-gray-600 before:px-px">
+          <UserAvatar user={user} />
+          <div className="flex w-full flex-col overflow-hidden">
+            <div className="flex items-center gap-1">
+              <h6 className="text-sm font-bold">
+                SampleReplyName
+                {/* {replyPost.author.name} */}
+              </h6>
+              <p className="text-sm text-gray-600">
+                @sampleReplyAuthorUsername
+                {/* @{replyPost.author.username} */}
+              </p>
+              <span className="text-sm text-gray-600">•</span>
+              <p className="text-sm text-gray-600">
+                {formatTimeToNow(new Date())}
+                {/* {formatTimeToNow(new Date(replyPost.createdAt))} */}
+              </p>
+            </div>
+            <p className="w-full text-wrap break-words text-sm">
+              Sample test test
+              {/* {replyPostContent.success ? replyPostContent.data.text : "Error"} */}
+            </p>
+          </div>
+        </div>
+        <p className="ml-10 mt-3 pl-3 text-sm text-gray-600">
+          Replying to{" "}
+          <span className="text-blue-500">@sampleReplyAuthorUsername</span>
+        </p>
+
+        <div className="mt-6 flex">
           <UserAvatar user={user} className="mr-1" />
           <TextareaAutosize
             value={text}
-            placeholder="What is happening?!"
+            placeholder="Post your reply"
             minRows={4}
             onChange={(e) => setText(e.target.value)}
             className="mt-1 flex min-h-[40px] w-full resize-none rounded-md bg-background px-2 text-xl outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
@@ -158,16 +192,6 @@ const ModalCreatePost = ({ user }: ModalCreatePostProps) => {
             localImagesUploadQueue={localImagesUploadQueue}
           />
         </OnDeleteImageContext.Provider>
-
-        <Button
-          className="w-fit px-2 font-medium text-blue-500 hover:text-blue-500"
-          variant={"ghost"}
-          size={"sm"}
-        >
-          <Earth className="mr-1 h-4 w-4 text-sm" />
-          Everyone can reply
-        </Button>
-        <Separator className="my-3" />
         <div className="flex items-center">
           <label
             className={buttonVariants({
@@ -217,7 +241,7 @@ const ModalCreatePost = ({ user }: ModalCreatePostProps) => {
             isLoading={isPending}
             disabled={isUploading || (text.length === 0 && images.length === 0)}
           >
-            Post
+            Reply
           </Button>
         </div>
       </div>
