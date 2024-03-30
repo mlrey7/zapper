@@ -51,6 +51,7 @@ const PostInteraction = ({
     onMutate: () => {
       setCurrentLike(true);
       setLikesAmount((prev) => prev + 1);
+      router.refresh();
     },
     onError: () => {
       setCurrentLike(false);
@@ -75,6 +76,7 @@ const PostInteraction = ({
     onMutate: () => {
       setCurrentLike(false);
       setLikesAmount((prev) => prev - 1);
+      router.refresh();
     },
     onError: () => {
       setCurrentLike(true);

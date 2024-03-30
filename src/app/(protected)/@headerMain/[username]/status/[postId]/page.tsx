@@ -16,6 +16,7 @@ const Page = () => {
         className="-ml-1"
         onClick={() => {
           router.back();
+          router.refresh();
         }}
       >
         <ArrowLeft className="h-6 w-6" />

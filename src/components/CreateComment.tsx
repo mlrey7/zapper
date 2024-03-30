@@ -23,10 +23,10 @@ import { generateMimeTypes } from "uploadthing/client";
 import UploadImageDisplay from "./UploadImageDisplay";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { ExtendedPost } from "@/types/db";
+import { ExtendedPost, PostAndAuthor } from "@/types/db";
 interface CreateCommentProps {
   user: Pick<User, "name" | "image">;
-  replyToPost: ExtendedPost;
+  replyToPost: PostAndAuthor;
 }
 
 interface Size {

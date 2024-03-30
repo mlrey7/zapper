@@ -1,6 +1,8 @@
-import PostDetail from "@/components/PostDetail";
-import PostDisplayServer from "@/components/PostDisplayServer";
+import PostComments from "@/components/PostComments";
+import PostDetailServer from "@/components/PostDetailServer";
 import { db } from "@/lib/db";
+import { LoaderCircle } from "lucide-react";
+import { Suspense } from "react";
 
 const Page = async ({ params }: { params: { postId: string } }) => {
   const post = await db.post.findFirst({
@@ -15,14 +17,6 @@ const Page = async ({ params }: { params: { postId: string } }) => {
           username: true,
         },
       },
-      likes: true,
-      replies: {
-        include: {
-          author: true,
-          postMetrics: true,
-        },
-      },
-      retweets: true,
       postMetrics: true,
     },
   });
@@ -31,10 +25,16 @@ const Page = async ({ params }: { params: { postId: string } }) => {
 
   return (
     <div className="mt-16 min-h-screen">
-      <PostDetail post={post} />
-      {post.replies.map((reply) => (
-        <PostDisplayServer key={reply.id} post={reply} />
-      ))}
+      <PostDetailServer post={post} />
+      <Suspense
+        fallback={
+          <div className="flex w-full items-center justify-center pt-16">
+            <LoaderCircle className="h-6 w-6 animate-spin text-blue-500" />
+          </div>
+        }
+      >
+        <PostComments replyToId={post.id} />
+      </Suspense>
     </div>
   );
 };

@@ -99,6 +99,7 @@ const ModalCreatePost = ({ user, replyToPost }: ModalCreatePostProps) => {
       setLocalImagesUploadQueue([]);
       setLocalImageSize(null);
       router.back();
+      router.refresh();
 
       return toast({
         title: "Success",

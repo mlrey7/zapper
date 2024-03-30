@@ -6,6 +6,8 @@ import React from "react";
 import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
 import PostFeed from "@/components/PostFeed";
 
+export const dynamic = "force-dynamic";
+
 const Page = async () => {
   const session = await getAuthSession();
 
