@@ -14,12 +14,12 @@ const Layout = ({
 }) => {
   return (
     <>
-      <div className="container fixed inset-x-0 grid grid-cols-12">
-        <div className="-z-10 col-span-3 w-full" />
-        <div className="z-10 col-span-6 w-full border-x bg-background/80 backdrop-blur-md">
+      <div className="container fixed inset-x-0 z-20 grid grid-cols-12">
+        <div className="col-span-3 w-full" />
+        <div className="col-span-6 w-full border-x bg-background/80 backdrop-blur-md">
           {headerMain}
         </div>
-        <div className="z-10 col-span-3 w-full">{headerSide}</div>
+        <div className="col-span-3 w-full">{headerSide}</div>
       </div>
 
       <div className="container grid grid-cols-12">

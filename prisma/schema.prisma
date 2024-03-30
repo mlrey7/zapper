@@ -87,6 +87,8 @@ model Post {
   quoteTo   Post?     @relation("QuoteTo", fields: [quoteToId], references: [id])
   quoted    Post[]    @relation("QuoteTo")
   retweets  Retweet[]
+
+  postMetrics PostMetrics?
 }
 
 model Like {
@@ -105,4 +107,13 @@ model Retweet {
   postId String
 
   @@id([userId, postId])
+}
+
+model PostMetrics {
+  id            String @id @default(cuid())
+  post          Post   @relation(fields: [postId], references: [id])
+  postId        String @unique
+  likesCount    Int
+  repliesCount  Int
+  retweetsCount Int
 }

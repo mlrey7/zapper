@@ -9,7 +9,7 @@ import {
   Upload,
 } from "lucide-react";
 import { Button, buttonVariants } from "./ui/button";
-import { useState } from "react";
+import { MouseEventHandler, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { PostLikeRequest } from "@/lib/validators/like";
@@ -88,35 +88,24 @@ const PostInteraction = ({
     },
   });
 
-  const handleLike = () => {
+  const handleLike = (e: React.MouseEvent) => {
+    e.stopPropagation();
     currentLike ? unlike() : like();
   };
 
   return (
     <div className="flex justify-between">
-      {/* <Button
+      <Button
         variant={"ghost"}
         size={"icon"}
-        onClick={() => {
+        onClick={(e: React.MouseEvent) => {
+          e.stopPropagation();
           router.push(`/compose/post?replyTo=${postId}`, { scroll: false });
         }}
       >
         <MessageCircle className="mr-1 h-4 w-4 text-gray-600" />
         <p className="text-xs text-gray-600">{repliesAmount}</p>
-      </Button> */}
-      <Link
-        className={buttonVariants({ variant: "ghost", size: "icon" })}
-        href={{
-          pathname: "/compose/post",
-          query: {
-            replyTo: postId,
-          },
-        }}
-        scroll={false}
-      >
-        <MessageCircle className="mr-1 h-4 w-4 text-gray-600" />
-        <p className="text-xs text-gray-600">{repliesAmount}</p>
-      </Link>
+      </Button>
       <Button variant={"ghost"} size={"icon"}>
         <Repeat className="mr-1 h-4 w-4 text-gray-600" />
         <p className="text-xs text-gray-600">{retweetsAmount}</p>

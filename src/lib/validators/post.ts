@@ -5,6 +5,8 @@ export const PostContentValidator = z.object({
   images: z.string().array().max(4),
 });
 
+export type PostContentType = z.infer<typeof PostContentValidator>;
+
 export const PostValidator = z.object({
   replyToId: z.string().optional(),
   quoteToId: z.string().optional(),

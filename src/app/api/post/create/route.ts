@@ -20,8 +20,41 @@ export async function POST(req: Request) {
         content,
         quoteToId,
         replyToId,
+        postMetrics: {
+          create: {
+            likesCount: 0,
+            repliesCount: 0,
+            retweetsCount: 0,
+          },
+        },
       },
     });
+
+    if (replyToId) {
+      await db.postMetrics.update({
+        where: {
+          postId: replyToId,
+        },
+        data: {
+          repliesCount: {
+            increment: 1,
+          },
+        },
+      });
+    }
+
+    if (quoteToId) {
+      await db.postMetrics.update({
+        where: {
+          postId: quoteToId,
+        },
+        data: {
+          retweetsCount: {
+            increment: 1,
+          },
+        },
+      });
+    }
 
     return new Response("Post successfully created");
   } catch (error) {

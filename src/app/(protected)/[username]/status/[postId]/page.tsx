@@ -1,4 +1,7 @@
 import PostDetail from "@/components/PostDetail";
+import PostDisplay from "@/components/PostDisplay";
+import ReplyDisplay from "@/components/ReplyDisplay";
+import ReplyDisplayServer from "@/components/ReplyDisplayServer";
 import { db } from "@/lib/db";
 
 const Page = async ({ params }: { params: { postId: string } }) => {
@@ -15,16 +18,25 @@ const Page = async ({ params }: { params: { postId: string } }) => {
         },
       },
       likes: true,
-      replies: true,
+      replies: {
+        include: {
+          author: true,
+          postMetrics: true,
+        },
+      },
       retweets: true,
+      postMetrics: true,
     },
   });
 
   if (!post) return null;
 
   return (
-    <div className="mt-16">
+    <div className="mt-16 min-h-screen">
       <PostDetail post={post} />
+      {post.replies.map((reply) => (
+        <ReplyDisplayServer key={reply.id} post={reply} />
+      ))}
     </div>
   );
 };

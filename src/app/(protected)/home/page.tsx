@@ -30,6 +30,7 @@ const Page = async () => {
       likes: true,
       replies: true,
       retweets: true,
+      postMetrics: true,
     },
   });
 

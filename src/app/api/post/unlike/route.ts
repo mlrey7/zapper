@@ -14,14 +14,36 @@ export async function PATCH(req: Request) {
     const body = await req.json();
     const { postId } = PostLikeValidator.parse(body);
 
-    await db.like.delete({
+    const postMetric = await db.postMetrics.findFirst({
       where: {
-        userId_postId: {
-          postId,
-          userId: session.user.id,
-        },
+        postId,
       },
     });
+
+    if (!postMetric) {
+      throw new Error();
+    }
+
+    await db.$transaction([
+      db.like.delete({
+        where: {
+          userId_postId: {
+            postId,
+            userId: session.user.id,
+          },
+        },
+      }),
+      db.postMetrics.update({
+        where: {
+          postId,
+        },
+        data: {
+          likesCount: {
+            decrement: 1,
+          },
+        },
+      }),
+    ]);
 
     return new Response("Successfuly removed like");
   } catch (error) {

@@ -23,7 +23,7 @@ const Page = async ({
     : null;
 
   return (
-    <div className="fixed inset-0 z-10 bg-zinc-600/30">
+    <div className="fixed inset-0 z-20 bg-zinc-600/30">
       <div className="container mx-auto flex h-full w-full pt-12">
         <ModalCreatePost
           user={{

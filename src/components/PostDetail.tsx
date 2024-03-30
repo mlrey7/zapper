@@ -7,6 +7,7 @@ import PostImageDisplay from "./PostImageDisplay";
 import PostInteraction from "./PostInteraction";
 import UserAvatar from "./UserAvatar";
 import { format } from "date-fns";
+import CreateComment from "./CreateComment";
 
 interface PostDetailProps {
   post: ExtendedPost;
@@ -21,7 +22,7 @@ const PostDetail = async ({ post }: PostDetailProps) => {
   );
 
   return (
-    <div className="px-4 py-3">
+    <div className="border-b px-4 py-3">
       <div className="flex w-full flex-col gap-3 overflow-hidden">
         <div className="flex items-center gap-2">
           <UserAvatar user={post.author} />
@@ -57,6 +58,13 @@ const PostDetail = async ({ post }: PostDetailProps) => {
             initialLike={currentLike}
           />
         </div>
+        <CreateComment
+          user={{
+            name: session?.user.name ?? "",
+            image: session?.user.image ?? "",
+          }}
+          replyToPost={post}
+        />
       </div>
     </div>
   );

@@ -14,12 +14,34 @@ export async function PATCH(req: Request) {
     const body = await req.json();
     const { postId } = PostLikeValidator.parse(body);
 
-    await db.like.create({
-      data: {
+    const postMetric = await db.postMetrics.findFirst({
+      where: {
         postId,
-        userId: session.user.id,
       },
     });
+
+    if (!postMetric) {
+      throw new Error();
+    }
+
+    await db.$transaction([
+      db.like.create({
+        data: {
+          postId,
+          userId: session.user.id,
+        },
+      }),
+      db.postMetrics.update({
+        where: {
+          postId,
+        },
+        data: {
+          likesCount: {
+            increment: 1,
+          },
+        },
+      }),
+    ]);
 
     return new Response("Successfuly like");
   } catch (error) {
