@@ -27,9 +27,6 @@ const Page = async () => {
           username: true,
         },
       },
-      likes: true,
-      replies: true,
-      retweets: true,
       postMetrics: true,
     },
   });

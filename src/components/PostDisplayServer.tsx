@@ -3,13 +3,13 @@ import { db } from "@/lib/db";
 import { PostContentValidator } from "@/lib/validators/post";
 import { PostAndAuthor } from "@/types/db";
 import React from "react";
-import ReplyDisplay from "./ReplyDisplay";
+import PostDisplay from "./PostDisplay";
 
-interface ReplyDisplayServerProps {
+interface PostDisplayServerProps {
   post: PostAndAuthor;
 }
 
-const ReplyDisplayServer = async ({ post }: ReplyDisplayServerProps) => {
+const PostDisplayServer = async ({ post }: PostDisplayServerProps) => {
   const session = await getAuthSession();
 
   const postContent = PostContentValidator.safeParse(post.content);
@@ -27,7 +27,7 @@ const ReplyDisplayServer = async ({ post }: ReplyDisplayServerProps) => {
   if (!postContent.success) return null;
 
   return (
-    <ReplyDisplay
+    <PostDisplay
       currentLike={currentLike}
       post={post}
       postContent={postContent.data}
@@ -35,4 +35,4 @@ const ReplyDisplayServer = async ({ post }: ReplyDisplayServerProps) => {
   );
 };
 
-export default ReplyDisplayServer;
+export default PostDisplayServer;

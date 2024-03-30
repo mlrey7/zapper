@@ -1,9 +1,9 @@
-import { ExtendedPost } from "@/types/db";
+import { PostAndAuthor } from "@/types/db";
 import React from "react";
-import PostDisplay from "./PostDisplay";
+import PostDisplayServer from "./PostDisplayServer";
 
 interface PostFeedProps {
-  initialPosts: Array<ExtendedPost>;
+  initialPosts: Array<PostAndAuthor>;
 }
 
 const PostFeed = ({ initialPosts }: PostFeedProps) => {
@@ -11,7 +11,7 @@ const PostFeed = ({ initialPosts }: PostFeedProps) => {
 
   return (
     <div className="flex w-full flex-col">
-      {...posts.map((post) => <PostDisplay key={post.id} post={post} />)}
+      {...posts.map((post) => <PostDisplayServer key={post.id} post={post} />)}
     </div>
   );
 };

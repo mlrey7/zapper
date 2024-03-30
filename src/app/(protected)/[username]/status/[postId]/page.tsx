@@ -1,7 +1,5 @@
 import PostDetail from "@/components/PostDetail";
-import PostDisplay from "@/components/PostDisplay";
-import ReplyDisplay from "@/components/ReplyDisplay";
-import ReplyDisplayServer from "@/components/ReplyDisplayServer";
+import PostDisplayServer from "@/components/PostDisplayServer";
 import { db } from "@/lib/db";
 
 const Page = async ({ params }: { params: { postId: string } }) => {
@@ -35,7 +33,7 @@ const Page = async ({ params }: { params: { postId: string } }) => {
     <div className="mt-16 min-h-screen">
       <PostDetail post={post} />
       {post.replies.map((reply) => (
-        <ReplyDisplayServer key={reply.id} post={reply} />
+        <PostDisplayServer key={reply.id} post={reply} />
       ))}
     </div>
   );
