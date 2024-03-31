@@ -89,6 +89,10 @@ model Post {
   retweets  Retweet[]
 
   postMetrics PostMetrics?
+
+  @@index(fields: [authorId], type: Hash)
+  @@index(fields: [replyToId], type: Hash)
+  @@index(fields: [quoteToId], type: Hash)
 }
 
 model Like {
@@ -116,4 +120,6 @@ model PostMetrics {
   likesCount    Int
   repliesCount  Int
   retweetsCount Int
+
+  @@index(fields: [postId], type: Hash)
 }
