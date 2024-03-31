@@ -9,12 +9,12 @@ import {
   Upload,
 } from "lucide-react";
 import { Button, buttonVariants } from "./ui/button";
-import { MouseEventHandler, useState } from "react";
+import { MouseEventHandler, startTransition, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { PostLikeRequest } from "@/lib/validators/like";
 import { boolean } from "zod";
-import { cn } from "@/lib/utils";
+import { cn, formatCompactNumber } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -51,7 +51,9 @@ const PostInteraction = ({
     onMutate: () => {
       setCurrentLike(true);
       setLikesAmount((prev) => prev + 1);
-      router.refresh();
+      startTransition(() => {
+        router.refresh();
+      });
     },
     onError: () => {
       setCurrentLike(false);
@@ -76,7 +78,9 @@ const PostInteraction = ({
     onMutate: () => {
       setCurrentLike(false);
       setLikesAmount((prev) => prev - 1);
-      router.refresh();
+      startTransition(() => {
+        router.refresh();
+      });
     },
     onError: () => {
       setCurrentLike(true);
@@ -106,11 +110,15 @@ const PostInteraction = ({
         }}
       >
         <MessageCircle className="mr-1 h-4 w-4 text-gray-600" />
-        <p className="text-xs text-gray-600">{repliesAmount}</p>
+        <p className="text-xs text-gray-600">
+          {formatCompactNumber(repliesAmount)}
+        </p>
       </Button>
       <Button variant={"ghost"} size={"icon"}>
         <Repeat className="mr-1 h-4 w-4 text-gray-600" />
-        <p className="text-xs text-gray-600">{retweetsAmount}</p>
+        <p className="text-xs text-gray-600">
+          {formatCompactNumber(retweetsAmount)}
+        </p>
       </Button>
       <Button variant={"ghost"} size={"icon"} onClick={handleLike}>
         <Heart
@@ -123,13 +131,13 @@ const PostInteraction = ({
             "text-red-500": currentLike,
           })}
         >
-          {likesAmount}
+          {formatCompactNumber(likesAmount)}
         </p>
       </Button>
       <Button variant={"ghost"} size={"icon"}>
         <BarChart className="mr-1 h-4 w-4 text-gray-600" />
         <p className="text-xs text-gray-600">
-          {repliesAmount + likesAmount + retweetsAmount}
+          {formatCompactNumber(repliesAmount + likesAmount + retweetsAmount)}
         </p>
       </Button>
       <div className="flex">

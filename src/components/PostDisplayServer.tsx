@@ -13,22 +13,21 @@ const PostDisplayServer = async ({ post }: PostDisplayServerProps) => {
   const session = await getAuthSession();
 
   const postContent = PostContentValidator.safeParse(post.content);
-  const user = await db.user.findFirst({
-    select: {
-      likes: true,
-    },
+
+  if (!session) return null;
+
+  const currentLike = await db.like.findFirst({
     where: {
-      id: session?.user.id,
+      postId: post.id,
+      userId: session.user.id,
     },
   });
-
-  const currentLike = !!user!.likes.find((like) => like.postId === post.id);
 
   if (!postContent.success) return null;
 
   return (
     <PostDisplay
-      currentLike={currentLike}
+      currentLike={!!currentLike}
       post={post}
       postContent={postContent.data}
     />

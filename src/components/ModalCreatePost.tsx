@@ -11,7 +11,7 @@ import {
   MapPin,
   Smile,
 } from "lucide-react";
-import { createContext, useRef, useState } from "react";
+import { createContext, startTransition, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { Separator } from "./ui/separator";
 import { Button, buttonVariants } from "./ui/button";
@@ -68,6 +68,9 @@ const ModalCreatePost = ({ user, replyToPost }: ModalCreatePostProps) => {
 
   const clickOutsideRef = useClickOutside(() => {
     router.back();
+    startTransition(() => {
+      router.refresh();
+    });
   });
 
   const { mutate: createPost, isPending } = useMutation({
@@ -99,7 +102,9 @@ const ModalCreatePost = ({ user, replyToPost }: ModalCreatePostProps) => {
       setLocalImagesUploadQueue([]);
       setLocalImageSize(null);
       router.back();
-      router.refresh();
+      startTransition(() => {
+        router.refresh();
+      });
 
       return toast({
         title: "Success",
@@ -172,7 +177,7 @@ const ModalCreatePost = ({ user, replyToPost }: ModalCreatePostProps) => {
                   {replyToPostContent.success && (
                     <>
                       {replyToPostContent.data.text}
-                      {replyToPostContent.data.images.length && <br />}
+                      {replyToPostContent.data.images.length > 0 && <br />}
                       {replyToPostContent.data.images.join(" ")}
                     </>
                   )}

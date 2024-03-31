@@ -23,6 +23,7 @@ import { useUploadThing } from "@/lib/uploadthing";
 import { generateMimeTypes } from "uploadthing/client";
 import UploadImageDisplay from "./UploadImageDisplay";
 import { useRouter } from "next/navigation";
+import { startTransition } from "react";
 interface MiniCreatePostProps {
   user: Pick<User, "name" | "image">;
 }
@@ -81,7 +82,9 @@ const MiniCreatePost = ({ user }: MiniCreatePostProps) => {
       setLocalImages([]);
       setLocalImagesUploadQueue([]);
       setLocalImageSize(null);
-      router.refresh();
+      startTransition(() => {
+        router.refresh();
+      });
 
       return toast({
         title: "Success",

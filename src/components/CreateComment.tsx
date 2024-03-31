@@ -11,7 +11,7 @@ import {
   MapPin,
   Smile,
 } from "lucide-react";
-import { createContext, useRef, useState } from "react";
+import { createContext, startTransition, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { Button, buttonVariants } from "./ui/button";
 import { useMutation } from "@tanstack/react-query";
@@ -84,7 +84,9 @@ const CreateComment = ({ user, replyToPost }: CreateCommentProps) => {
       setLocalImages([]);
       setLocalImagesUploadQueue([]);
       setLocalImageSize(null);
-      router.refresh();
+      startTransition(() => {
+        router.refresh();
+      });
 
       return toast({
         title: "Success",

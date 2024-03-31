@@ -1,55 +1,14 @@
 import MiniCreatePost from "@/components/MiniCreatePost";
 import { getAuthSession } from "@/lib/auth";
-import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
-import React from "react";
-import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
+import React, { Suspense } from "react";
 import PostFeed from "@/components/PostFeed";
-
-export const dynamic = "force-dynamic";
+import { LoaderCircle } from "lucide-react";
 
 const Page = async () => {
   const session = await getAuthSession();
 
   if (!session) redirect("/");
-
-  const posts = await db.post.findMany({
-    where: {
-      replyToId: null,
-    },
-    take: INFINITE_SCROLLING_PAGINATION_RESULTS,
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      author: {
-        select: {
-          image: true,
-          name: true,
-          username: true,
-        },
-      },
-      postMetrics: true,
-    },
-  });
-
-  // const posts = await db.user.findUnique({
-  //   where: {
-  //     id: session.user.id
-  //   },
-  //   include: {
-  //     following: {
-  //       include: {
-  //         following: {
-  //           include: {
-  //             posts: true
-  //           }
-  //         }
-  //       }
-  //     },
-  //     posts: true
-  //   },
-  // })
 
   return (
     <div className="mt-16 flex min-h-screen flex-col items-center">
@@ -59,7 +18,15 @@ const Page = async () => {
           image: session?.user.image ?? "",
         }}
       />
-      <PostFeed initialPosts={posts} />
+      <Suspense
+        fallback={
+          <div className="flex w-full items-center justify-center px-4 py-3">
+            <LoaderCircle className="h-6 w-6 animate-spin text-blue-500" />
+          </div>
+        }
+      >
+        <PostFeed />
+      </Suspense>
     </div>
   );
 };

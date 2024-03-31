@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { startTransition } from "react";
 
 const Page = () => {
   const router = useRouter();
@@ -16,7 +16,9 @@ const Page = () => {
         className="-ml-1"
         onClick={() => {
           router.back();
-          router.refresh();
+          startTransition(() => {
+            router.refresh();
+          });
         }}
       >
         <ArrowLeft className="h-6 w-6" />
