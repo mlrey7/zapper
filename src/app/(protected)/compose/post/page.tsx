@@ -27,46 +27,6 @@ const Page = async ({
       })
     : null;
 
-  const posts = await db.post.findMany({
-    where: {
-      replyToId: null,
-    },
-    take: INFINITE_SCROLLING_PAGINATION_RESULTS,
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      author: {
-        select: {
-          image: true,
-          name: true,
-          username: true,
-        },
-      },
-      likes: true,
-      replies: true,
-      retweets: true,
-    },
-  });
-
-  // const posts = await db.user.findUnique({
-  //   where: {
-  //     id: session.user.id
-  //   },
-  //   include: {
-  //     following: {
-  //       include: {
-  //         following: {
-  //           include: {
-  //             posts: true
-  //           }
-  //         }
-  //       }
-  //     },
-  //     posts: true
-  //   },
-  // })
-
   return (
     <>
       <div className="fixed inset-0 z-10 bg-zinc-600/30">
@@ -88,7 +48,7 @@ const Page = async ({
             image: session?.user.image ?? "",
           }}
         />
-        <PostFeed initialPosts={posts} />
+        <PostFeed />
       </div>
     </>
   );
