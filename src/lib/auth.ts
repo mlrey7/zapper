@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { db } from "./db";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { nanoid } from "nanoid";
+import { cache } from "react";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
@@ -67,4 +68,4 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
-export const getAuthSession = () => getServerSession(authOptions);
+export const getAuthSession = cache(() => getServerSession(authOptions));
