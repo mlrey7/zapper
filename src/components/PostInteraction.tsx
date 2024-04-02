@@ -5,6 +5,7 @@ import {
   Bookmark,
   Heart,
   MessageCircle,
+  PenLine,
   Repeat,
   Upload,
 } from "lucide-react";
@@ -19,6 +20,14 @@ import { toast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PostCreationRequest } from "@/lib/validators/post";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 interface PostInteractionProps {
   postId: string;
@@ -169,20 +178,73 @@ const PostInteraction = ({
           {formatCompactNumber(repliesAmount)}
         </p>
       </Button>
-      <Button variant={"ghost"} size={"icon"} onClick={handleRetweet}>
-        <Repeat
-          className={cn("mr-1 h-4 w-4 text-gray-600", {
-            "fill-green-600 text-green-600": currentRetweet,
-          })}
-        />
-        <p
-          className={cn("text-xs text-gray-600", {
-            "text-green-600": currentRetweet,
-          })}
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant={"ghost"} size={"icon"} onClick={handleRetweet}>
+            <Repeat
+              className={cn("mr-1 h-4 w-4 text-gray-600", {
+                "fill-green-600 text-green-600": currentRetweet,
+              })}
+            />
+            <p
+              className={cn("text-xs text-gray-600", {
+                "text-green-600": currentRetweet,
+              })}
+            >
+              {formatCompactNumber(retweetsAmount)}
+            </p>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem className="flex items-center py-3">
+            <Repeat className={cn("mr-2 h-4 w-4")} />
+            <p className="text-sm">Repost</p>
+          </DropdownMenuItem>
+          <DropdownMenuItem className="flex items-center py-3">
+            <PenLine className={cn("mr-2 h-4 w-4")} />
+            <p className="text-sm">Quote</p>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {/* <div className="relative">
+        {openRetweetDialogOption && (
+          <div className="absolute right-0 top-0 z-10 flex w-32 flex-col overflow-visible rounded border bg-background shadow">
+            <div
+              className="flex items-center justify-center px-4 py-3"
+              onClick={handleRetweet}
+            >
+              <Repeat className={cn("mr-2 h-4 w-4")} />
+              <p className="text-sm">Repost</p>
+            </div>
+            <div className="flex items-center justify-center px-4 py-3">
+              <PenLine className={cn("mr-2 h-4 w-4")} />
+              <p className="text-sm">Quote</p>
+            </div>
+          </div>
+        )}
+
+        <Button
+          variant={"ghost"}
+          size={"icon"}
+          onClick={handleOpenRetweetDialog}
         >
-          {formatCompactNumber(retweetsAmount)}
-        </p>
-      </Button>
+          <Repeat
+            className={cn("mr-1 h-4 w-4 text-gray-600", {
+              "fill-green-600 text-green-600": currentRetweet,
+            })}
+          />
+          <p
+            className={cn("text-xs text-gray-600", {
+              "text-green-600": currentRetweet,
+            })}
+          >
+            {formatCompactNumber(retweetsAmount)}
+          </p>
+        </Button>
+      </div> */}
+
       <Button variant={"ghost"} size={"icon"} onClick={handleLike}>
         <Heart
           className={cn("mr-1 h-4 w-4 text-gray-600", {

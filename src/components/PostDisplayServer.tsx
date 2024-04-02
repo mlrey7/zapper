@@ -1,18 +1,23 @@
 import { getAuthSession } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { PostContentValidator } from "@/lib/validators/post";
-import { PostAndAuthor } from "@/types/db";
+import { PostAndAuthor, PostAndAuthorAll } from "@/types/db";
 import React from "react";
 import PostDisplay from "./PostDisplay";
+import RetweetDisplay from "./RetweetDisplay";
+import QuoteDisplay from "./QuoteDisplay";
 
 interface PostDisplayServerProps {
-  post: PostAndAuthor;
+  post: PostAndAuthorAll;
 }
 
 const PostDisplayServer = async ({ post }: PostDisplayServerProps) => {
   const session = await getAuthSession();
 
   const postContent = PostContentValidator.safeParse(post.content);
+  const quotedPostContent = PostContentValidator.safeParse(
+    post.quoteTo?.content,
+  );
 
   if (!session) return null;
 
@@ -32,7 +37,27 @@ const PostDisplayServer = async ({ post }: PostDisplayServerProps) => {
 
   if (!postContent.success) return null;
 
-  return (
+  const isQuote =
+    post.quoteToId !== null &&
+    (postContent.data.text !== "" || postContent.data.images.length > 0);
+
+  return post.quoteToId ? (
+    isQuote ? (
+      <QuoteDisplay
+        currentLike={!!currentLike}
+        currentRetweet={!!currentRetweet}
+        post={post}
+        postContent={postContent.data}
+      />
+    ) : (
+      <RetweetDisplay
+        currentLike={!!currentLike}
+        currentRetweet={!!currentRetweet}
+        post={post}
+        postContent={postContent.data}
+      />
+    )
+  ) : (
     <PostDisplay
       currentLike={!!currentLike}
       currentRetweet={!!currentRetweet}

@@ -2,7 +2,6 @@ import React from "react";
 import PostDisplayServer from "./PostDisplayServer";
 import { db } from "@/lib/db";
 import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
-import RetweetDisplayServer from "./RetweetDisplayServer";
 
 const PostFeed = async () => {
   const posts = await db.post.findMany({
@@ -34,11 +33,7 @@ const PostFeed = async () => {
   return (
     <div className="flex w-full flex-col">
       {...posts.map((post) => {
-        return post.quoteToId ? (
-          <RetweetDisplayServer key={post.id} post={post} />
-        ) : (
-          <PostDisplayServer key={post.id} post={post} />
-        );
+        return <PostDisplayServer key={post.id} post={post} />;
       })}
     </div>
   );

@@ -1,10 +1,15 @@
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 import React from "react";
 
 interface PostImageDisplayProps {
   images: Array<string>;
+  isEmbedded?: boolean;
 }
-const PostImageDisplay = ({ images }: PostImageDisplayProps) => {
+const PostImageDisplay = ({
+  images,
+  isEmbedded = false,
+}: PostImageDisplayProps) => {
   if (images.length === 0) return null;
 
   return (
@@ -15,7 +20,9 @@ const PostImageDisplay = ({ images }: PostImageDisplayProps) => {
           alt="post embed"
           width={0}
           height={0}
-          className="h-auto w-3/4 rounded-3xl object-cover"
+          className={cn("h-auto w-3/4 rounded-3xl object-cover", {
+            "rounded-t-none": isEmbedded,
+          })}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw"
         ></Image>
       )}
@@ -27,7 +34,9 @@ const PostImageDisplay = ({ images }: PostImageDisplayProps) => {
             alt="post embed"
             width={0}
             height={0}
-            className="h-72 w-full rounded-l-3xl object-cover"
+            className={cn("h-72 w-full rounded-l-3xl object-cover", {
+              "rounded-t-none": isEmbedded,
+            })}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw"
             key={images[0]}
           ></Image>
@@ -37,7 +46,9 @@ const PostImageDisplay = ({ images }: PostImageDisplayProps) => {
             alt="post embed"
             width={0}
             height={0}
-            className="h-72 w-full rounded-r-3xl object-cover"
+            className={cn("h-72 w-full rounded-r-3xl object-cover", {
+              "rounded-t-none": isEmbedded,
+            })}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw"
             key={images[1]}
           ></Image>
@@ -51,7 +62,9 @@ const PostImageDisplay = ({ images }: PostImageDisplayProps) => {
             alt="post embed"
             width={0}
             height={0}
-            className="row-span-2 h-72 w-full rounded-l-3xl object-cover"
+            className={cn("row-span-2 h-72 w-full rounded-l-3xl object-cover", {
+              "rounded-t-none": isEmbedded,
+            })}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw"
             key={images[0]}
           ></Image>
@@ -61,7 +74,9 @@ const PostImageDisplay = ({ images }: PostImageDisplayProps) => {
             alt="post embed"
             width={0}
             height={0}
-            className="h-36 w-full rounded-tr-3xl object-cover"
+            className={cn("h-36 w-full rounded-tr-3xl object-cover", {
+              "rounded-t-none": isEmbedded,
+            })}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw"
             key={images[1]}
           ></Image>
@@ -85,7 +100,9 @@ const PostImageDisplay = ({ images }: PostImageDisplayProps) => {
             alt="post embed"
             width={0}
             height={0}
-            className="h-36 w-full rounded-tl-3xl object-cover"
+            className={cn("h-36 w-full rounded-tl-3xl object-cover", {
+              "rounded-t-none": isEmbedded,
+            })}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw"
             key={images[0]}
           ></Image>
@@ -95,7 +112,9 @@ const PostImageDisplay = ({ images }: PostImageDisplayProps) => {
             alt="post embed"
             width={0}
             height={0}
-            className="h-36 w-full rounded-tr-3xl object-cover"
+            className={cn("h-36 w-full rounded-tr-3xl object-cover", {
+              "rounded-t-none": isEmbedded,
+            })}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw"
             key={images[1]}
           ></Image>

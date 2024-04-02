@@ -4,7 +4,7 @@ import { ExtendedPost, PostAndAuthor, PostAndAuthorAll } from "@/types/db";
 import React from "react";
 import UserAvatar from "./UserAvatar";
 import { formatTimeToNow } from "@/lib/utils";
-import { PostContentType } from "@/lib/validators/post";
+import { PostContentType, PostContentValidator } from "@/lib/validators/post";
 import PostImageDisplay from "./PostImageDisplay";
 import PostInteraction from "./PostInteraction";
 import PostDisplayMoreOptions from "./PostDisplayMoreOptions";
@@ -20,15 +20,18 @@ interface RetweetDisplayProps {
 }
 
 const RetweetDisplay = ({
-  post: parentPost,
+  post,
   currentLike,
   currentRetweet,
   postContent,
 }: RetweetDisplayProps) => {
   const router = useRouter();
 
-  const post = parentPost.quoteTo!;
+  const quotedPost = post.quoteTo!;
 
+  const quotedPostContent = PostContentValidator.safeParse(quotedPost.content);
+
+  if (!quotedPostContent.success) return null;
   const initialRepliesAmount = post.postMetrics?.repliesCount ?? 0;
   const initialLikesAmount = post.postMetrics?.likesCount ?? 0;
   const initialRetweetsAmount = post.postMetrics?.retweetsCount ?? 0;
@@ -45,7 +48,7 @@ const RetweetDisplay = ({
           <Repeat className="h-3 w-3 text-gray-600" />
         </div>
         <p className="text-xs font-semibold text-gray-600">
-          {parentPost.author.name} {" reposted"}
+          {post.author.name} {" reposted"}
         </p>
       </div>
 
@@ -60,21 +63,23 @@ const RetweetDisplay = ({
 
         <div className="flex w-full flex-col overflow-hidden">
           <div className="flex items-center gap-1">
-            <h6 className="text-sm font-bold">{post.author.name}</h6>
-            <p className="text-sm text-gray-600">@{post.author.username}</p>
+            <h6 className="text-sm font-bold">{quotedPost.author.name}</h6>
+            <p className="text-sm text-gray-600">
+              @{quotedPost.author.username}
+            </p>
             <span className="text-sm text-gray-600">•</span>
             <p className="text-sm text-gray-600">
-              {formatTimeToNow(new Date(post.createdAt))}
+              {formatTimeToNow(new Date(quotedPost.createdAt))}
             </p>
             <div className="flex-1" />
             <PostDisplayMoreOptions />
           </div>
           <p className="w-full text-wrap break-words text-sm">
-            {postContent.text}
+            {quotedPostContent.data.text}
           </p>
-          {postContent.images.length > 0 && (
+          {quotedPostContent.data.images.length > 0 && (
             <div className="mt-4">
-              <PostImageDisplay images={postContent.images} />
+              <PostImageDisplay images={quotedPostContent.data.images} />
             </div>
           )}
           <div className="mt-3">
