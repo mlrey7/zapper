@@ -13,6 +13,7 @@ import { User } from "@prisma/client";
 interface PostDetailClientProps {
   post: PostAndAuthor;
   currentLike: boolean;
+  currentRetweet: boolean;
   postContent: PostContentType;
   user: Pick<User, "name" | "username" | "image">;
 }
@@ -20,6 +21,7 @@ interface PostDetailClientProps {
 const PostDetailClient = ({
   post,
   currentLike,
+  currentRetweet,
   postContent,
   user,
 }: PostDetailClientProps) => {
@@ -56,6 +58,7 @@ const PostDetailClient = ({
             initialRetweetsAmount={post.postMetrics?.retweetsCount ?? 0}
             postId={post.id}
             initialLike={currentLike}
+            initialRetweet={currentRetweet}
           />
         </div>
         <CreateComment

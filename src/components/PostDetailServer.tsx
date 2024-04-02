@@ -14,22 +14,26 @@ const PostDetailServer = async ({ post }: PostDetailServerProps) => {
 
   if (!session) return null;
   const postContent = PostContentValidator.safeParse(post.content);
-  const user = await db.user.findFirst({
-    select: {
-      likes: true,
-    },
+
+  const currentLike = await db.like.findFirst({
     where: {
-      id: session?.user.id,
+      postId: post.id,
+      userId: session.user.id,
     },
   });
 
-  const currentLike = !!user!.likes.find((like) => like.postId === post.id);
-
+  const currentRetweet = await db.post.findFirst({
+    where: {
+      quoteToId: post.id,
+      authorId: session.user.id,
+    },
+  });
   if (!postContent.success) return null;
 
   return (
     <PostDetailClient
-      currentLike={currentLike}
+      currentLike={!!currentLike}
+      currentRetweet={!!currentRetweet}
       post={post}
       postContent={postContent.data}
       user={{

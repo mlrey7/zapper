@@ -1,31 +1,31 @@
 import { getAuthSession } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { PostContentValidator } from "@/lib/validators/post";
-import { PostAndAuthor } from "@/types/db";
+import { PostAndAuthorAll } from "@/types/db";
 import React from "react";
-import PostDisplay from "./PostDisplay";
+import RetweetDisplay from "./RetweetDisplay";
 
-interface PostDisplayServerProps {
-  post: PostAndAuthor;
+interface RetweetDisplayServerProps {
+  post: PostAndAuthorAll;
 }
 
-const PostDisplayServer = async ({ post }: PostDisplayServerProps) => {
+const RetweetDisplayServer = async ({ post }: RetweetDisplayServerProps) => {
   const session = await getAuthSession();
 
-  const postContent = PostContentValidator.safeParse(post.content);
+  const postContent = PostContentValidator.safeParse(post.quoteTo?.content);
 
   if (!session) return null;
 
   const currentLike = await db.like.findFirst({
     where: {
-      postId: post.id,
+      postId: post.quoteToId!,
       userId: session.user.id,
     },
   });
 
   const currentRetweet = await db.post.findFirst({
     where: {
-      quoteToId: post.id,
+      quoteToId: post.quoteToId!,
       authorId: session.user.id,
     },
   });
@@ -33,7 +33,7 @@ const PostDisplayServer = async ({ post }: PostDisplayServerProps) => {
   if (!postContent.success) return null;
 
   return (
-    <PostDisplay
+    <RetweetDisplay
       currentLike={!!currentLike}
       currentRetweet={!!currentRetweet}
       post={post}
@@ -42,4 +42,4 @@ const PostDisplayServer = async ({ post }: PostDisplayServerProps) => {
   );
 };
 
-export default PostDisplayServer;
+export default RetweetDisplayServer;

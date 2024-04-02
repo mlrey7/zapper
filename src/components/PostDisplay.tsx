@@ -14,11 +14,26 @@ import Link from "next/link";
 interface PostDisplayProps {
   post: PostAndAuthor;
   currentLike: boolean;
+  currentRetweet: boolean;
   postContent: PostContentType;
 }
 
-const PostDisplay = ({ post, currentLike, postContent }: PostDisplayProps) => {
+const PostDisplay = ({
+  post,
+  currentLike,
+  currentRetweet,
+  postContent,
+}: PostDisplayProps) => {
   const router = useRouter();
+  const isRetweet =
+    post.quoteToId !== null &&
+    postContent.text === "" &&
+    postContent.images.length === 0;
+  const isQuote =
+    post.quoteToId !== null &&
+    (postContent.text !== "" || postContent.images.length > 0);
+
+  const postInteractivityId = isRetweet ? post.quoteToId! : post.id;
 
   return (
     <div
@@ -59,8 +74,9 @@ const PostDisplay = ({ post, currentLike, postContent }: PostDisplayProps) => {
             initialRepliesAmount={post.postMetrics?.repliesCount ?? 0}
             initialLikesAmount={post.postMetrics?.likesCount ?? 0}
             initialRetweetsAmount={post.postMetrics?.retweetsCount ?? 0}
-            postId={post.id}
+            postId={postInteractivityId}
             initialLike={currentLike}
+            initialRetweet={currentRetweet}
           />
         </div>
       </div>

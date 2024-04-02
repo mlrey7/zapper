@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const PostContentValidator = z.object({
-  text: z.string().min(1).max(280),
+  text: z.string().max(280),
   images: z.string().array().max(4),
 });
 

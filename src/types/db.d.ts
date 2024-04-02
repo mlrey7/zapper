@@ -12,3 +12,7 @@ export type PostAndAuthor = Post & {
   author: Pick<User, "name" | "username" | "image">;
   postMetrics?: PostMetrics | null;
 };
+
+export type PostAndAuthorAll = PostAndAuthor & {
+  quoteTo: PostAndAuthor | null;
+};

@@ -18,6 +18,7 @@ import { cn, formatCompactNumber } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { PostCreationRequest } from "@/lib/validators/post";
 
 interface PostInteractionProps {
   postId: string;
@@ -25,6 +26,7 @@ interface PostInteractionProps {
   initialRepliesAmount: number;
   initialRetweetsAmount: number;
   initialLike: boolean;
+  initialRetweet: boolean;
 }
 
 const PostInteraction = ({
@@ -33,11 +35,14 @@ const PostInteraction = ({
   initialRetweetsAmount,
   postId,
   initialLike,
+  initialRetweet,
 }: PostInteractionProps) => {
   const [repliesAmount, setRepliesAmount] = useState(initialRepliesAmount);
   const [likesAmount, setLikesAmount] = useState(initialLikesAmount);
   const [retweetsAmount, setRetweetsAmount] = useState(initialRetweetsAmount);
   const [currentLike, setCurrentLike] = useState(initialLike);
+  const [currentRetweet, setCurrentRetweet] = useState(initialRetweet);
+
   const router = useRouter();
 
   const { mutate: like } = useMutation({
@@ -94,9 +99,59 @@ const PostInteraction = ({
     },
   });
 
+  const { mutate: retweet } = useMutation({
+    mutationFn: async ({
+      content,
+      quoteToId,
+      replyToId,
+    }: PostCreationRequest) => {
+      const payload: PostCreationRequest = {
+        content,
+        quoteToId,
+        replyToId,
+      };
+
+      const { data } = await axios.post("/api/post/create", payload);
+      return data;
+    },
+    onMutate: () => {
+      setCurrentRetweet(true);
+      setRetweetsAmount((prev) => prev + 1);
+    },
+    onError: () => {
+      return toast({
+        title: "Something went wrong",
+        description: "Your post was not published, please try again later.",
+        variant: "destructive",
+      });
+    },
+    onSuccess: () => {
+      startTransition(() => {
+        router.refresh();
+      });
+
+      return toast({
+        title: "Success",
+        description: "Successfully retweeted",
+      });
+    },
+  });
+
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
     currentLike ? unlike() : like();
+  };
+
+  const handleRetweet = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    retweet({
+      content: {
+        text: "",
+        images: [],
+      },
+      quoteToId: postId,
+    });
   };
 
   return (
@@ -114,21 +169,29 @@ const PostInteraction = ({
           {formatCompactNumber(repliesAmount)}
         </p>
       </Button>
-      <Button variant={"ghost"} size={"icon"}>
-        <Repeat className="mr-1 h-4 w-4 text-gray-600" />
-        <p className="text-xs text-gray-600">
+      <Button variant={"ghost"} size={"icon"} onClick={handleRetweet}>
+        <Repeat
+          className={cn("mr-1 h-4 w-4 text-gray-600", {
+            "fill-green-600 text-green-600": currentRetweet,
+          })}
+        />
+        <p
+          className={cn("text-xs text-gray-600", {
+            "text-green-600": currentRetweet,
+          })}
+        >
           {formatCompactNumber(retweetsAmount)}
         </p>
       </Button>
       <Button variant={"ghost"} size={"icon"} onClick={handleLike}>
         <Heart
           className={cn("mr-1 h-4 w-4 text-gray-600", {
-            "fill-red-500 text-red-500": currentLike,
+            "fill-red-600 text-red-600": currentLike,
           })}
         />
         <p
           className={cn("text-xs text-gray-600", {
-            "text-red-500": currentLike,
+            "text-red-600": currentLike,
           })}
         >
           {formatCompactNumber(likesAmount)}
