@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import NavbarProfile from "@/components/NavbarProfile";
 import Sidebar from "@/components/Sidebar";
 
 const Layout = ({
@@ -15,7 +16,7 @@ const Layout = ({
   return (
     <>
       <div className="container fixed inset-x-0 z-20 grid grid-cols-12">
-        <div className="col-span-3 w-full" />
+        <div className="pointer-events-none col-span-3 w-full" />
         <div className="col-span-6 w-full border-x bg-background/80 backdrop-blur-md">
           {headerMain}
         </div>
@@ -25,7 +26,9 @@ const Layout = ({
       <div className="container grid grid-cols-12">
         {postModal}
         <div className="col-span-3">
-          <Navbar />
+          <Navbar>
+            <NavbarProfile />
+          </Navbar>
         </div>
         <div className="col-span-6 border-x">{children}</div>
         <div className="col-span-3">

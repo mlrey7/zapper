@@ -1,30 +1,29 @@
-import React from "react";
+"use client";
 import NavbarMain from "./NavbarMain";
-import { getAuthSession } from "@/lib/auth";
-import UserAvatar from "./UserAvatar";
-import { Ellipsis } from "lucide-react";
+import { useViewportSize } from "@mantine/hooks";
 
-const Navbar = async () => {
-  const session = await getAuthSession();
+const floor = (val: number, min: number) => Math.max(val, min);
+
+const Navbar = ({ children }: { children?: React.ReactNode }) => {
+  const { width } = useViewportSize();
+  const BREAKPOINT = 1400;
+  const margin = floor(width - BREAKPOINT, 0) / 2;
+  const PADDING = 32;
+
+  const navPositionRight =
+    width < BREAKPOINT
+      ? width - (width - PADDING * 2) / 4 - PADDING
+      : width - ((BREAKPOINT - PADDING * 2) / 4 + margin + PADDING);
 
   return (
-    <div className="fixed ml-20 flex flex-col gap-12 py-4">
+    <div
+      className="fixed flex flex-col gap-12 py-4 pr-4"
+      style={{
+        right: navPositionRight,
+      }}
+    >
       <NavbarMain />
-      <div className="flex items-center justify-between">
-        <div className="flex ">
-          <UserAvatar
-            user={{
-              name: session?.user.name,
-              image: session?.user.image,
-            }}
-          />
-          <div className="ml-2 flex flex-col gap-0.5">
-            <p className="text-sm font-bold">{session?.user.name}</p>
-            <p className="text-xs text-slate-500">@{session?.user.username}</p>
-          </div>
-        </div>
-        <Ellipsis className="h-4 w-4" />
-      </div>
+      {children}
     </div>
   );
 };
