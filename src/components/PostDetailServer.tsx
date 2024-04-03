@@ -1,12 +1,12 @@
 import { getAuthSession } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { PostContentValidator } from "@/lib/validators/post";
-import { PostAndAuthor } from "@/types/db";
+import { PostAndAuthor, PostAndAuthorAll } from "@/types/db";
 import React from "react";
 import PostDetailClient from "./PostDetailClient";
 
 interface PostDetailServerProps {
-  post: PostAndAuthor;
+  post: PostAndAuthorAll;
 }
 
 const PostDetailServer = async ({ post }: PostDetailServerProps) => {

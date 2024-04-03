@@ -1,6 +1,6 @@
 import { getAuthSession } from "@/lib/auth";
 import { PostContentType, PostContentValidator } from "@/lib/validators/post";
-import { ExtendedPost, PostAndAuthor } from "@/types/db";
+import { ExtendedPost, PostAndAuthor, PostAndAuthorAll } from "@/types/db";
 import React from "react";
 import PostDisplayMoreOptions from "./PostDisplayMoreOptions";
 import PostImageDisplay from "./PostImageDisplay";
@@ -9,9 +9,10 @@ import UserAvatar from "./UserAvatar";
 import { format } from "date-fns";
 import CreateComment from "./CreateComment";
 import { User } from "@prisma/client";
+import EmbeddedPost from "./EmbeddedPost";
 
 interface PostDetailClientProps {
-  post: PostAndAuthor;
+  post: PostAndAuthorAll;
   currentLike: boolean;
   currentRetweet: boolean;
   postContent: PostContentType;
@@ -40,7 +41,11 @@ const PostDetailClient = ({
         <p className="w-full text-wrap break-words text-sm">
           {postContent.text}
         </p>
+
         <PostImageDisplay images={postContent.images} />
+
+        {!!post.quoteTo && <EmbeddedPost embeddedPost={post.quoteTo} />}
+
         <div className="flex gap-1 border-b pb-3">
           <p className="text-sm text-gray-600">
             {format(new Date(post.createdAt), "hh:mm a")}
