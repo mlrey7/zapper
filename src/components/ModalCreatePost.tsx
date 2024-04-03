@@ -30,10 +30,12 @@ import CloseModal from "./CloseModal";
 import { useClickOutside } from "@mantine/hooks";
 import { ExtendedPost, PostAndAuthor } from "@/types/db";
 import { formatTimeToNow } from "@/lib/utils";
+import EmbeddedPost from "./EmbeddedPost";
 
 interface ModalCreatePostProps {
   user: Pick<User, "name" | "image">;
   replyToPost: PostAndAuthor | null;
+  quotedPost: PostAndAuthor | null;
 }
 
 interface Size {
@@ -45,7 +47,11 @@ type onDelete = (index: number) => void;
 
 export const OnDeleteImageContext = createContext<onDelete>(() => {});
 
-const ModalCreatePost = ({ user, replyToPost }: ModalCreatePostProps) => {
+const ModalCreatePost = ({
+  user,
+  replyToPost,
+  quotedPost,
+}: ModalCreatePostProps) => {
   const [text, setText] = useState("");
   const [images, setImages] = useState<Array<string>>([]);
   const [localImages, setLocalImages] = useState<Array<File>>([]);
@@ -120,6 +126,7 @@ const ModalCreatePost = ({ user, replyToPost }: ModalCreatePostProps) => {
         images,
       },
       replyToId: replyToPost?.id,
+      quoteToId: quotedPost?.id,
     });
   };
 
@@ -198,11 +205,15 @@ const ModalCreatePost = ({ user, replyToPost }: ModalCreatePostProps) => {
           <TextareaAutosize
             value={text}
             placeholder={
-              !!replyToPost ? "Post your reply" : "What is happening?!"
+              !!replyToPost
+                ? "Post your reply"
+                : !!quotedPost
+                  ? "Add a comment"
+                  : "What is happening?!"
             }
-            minRows={4}
+            minRows={!!quotedPost ? 2 : 4}
             onChange={(e) => setText(e.target.value)}
-            className="mt-1 flex min-h-[40px] w-full resize-none rounded-md bg-background px-2 text-xl outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-1 flex min-h-[40px] w-full resize-none rounded-md bg-background pl-2 text-xl outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
           />
         </div>
 
@@ -214,6 +225,12 @@ const ModalCreatePost = ({ user, replyToPost }: ModalCreatePostProps) => {
             localImagesUploadQueue={localImagesUploadQueue}
           />
         </OnDeleteImageContext.Provider>
+        {!!quotedPost && (
+          <div className="flex w-full gap-2">
+            <div className="w-10" />
+            <EmbeddedPost embeddedPost={quotedPost} className="ml-2 w-full" />
+          </div>
+        )}
         {!replyToPost && (
           <>
             <Button

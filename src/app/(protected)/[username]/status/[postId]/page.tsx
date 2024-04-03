@@ -2,7 +2,7 @@ import PostComments from "@/components/PostComments";
 import PostDetailServer from "@/components/PostDetailServer";
 import { db } from "@/lib/db";
 import { redis } from "@/lib/redis";
-import { PostAndAuthor } from "@/types/db";
+import { PostAndAuthorAll } from "@/types/db";
 import { LoaderCircle } from "lucide-react";
 import { Suspense } from "react";
 
@@ -20,11 +20,11 @@ function omit<Data extends object, Keys extends keyof Data>(
 }
 
 const Page = async ({ params }: { params: { postId: string } }) => {
-  let post: PostAndAuthor | null;
+  let post: PostAndAuthorAll | null;
 
   const cachedPostWithoutMetrics = (await redis.hgetall(
     `post:${params.postId}`,
-  )) as Omit<PostAndAuthor, "postMetrics"> | null;
+  )) as Omit<PostAndAuthorAll, "postMetrics"> | null;
 
   if (!cachedPostWithoutMetrics) {
     post = await db.post.findFirst({
@@ -40,11 +40,29 @@ const Page = async ({ params }: { params: { postId: string } }) => {
           },
         },
         postMetrics: true,
+        quoteTo: {
+          include: {
+            author: true,
+            postMetrics: true,
+          },
+        },
       },
     });
 
     if (post) {
-      await redis.hset(`post:${params.postId}`, omit(post, ["postMetrics"]));
+      if (post.quoteTo) {
+        const { postMetrics, ...strippedQuote } = post.quoteTo;
+        const strippedPost = {
+          ...post,
+          quoteTo: strippedQuote,
+        };
+        await redis.hset(
+          `post:${params.postId}`,
+          omit(strippedPost, ["postMetrics"]),
+        );
+      } else {
+        await redis.hset(`post:${params.postId}`, omit(post, ["postMetrics"]));
+      }
     }
   } else {
     const postMetrics = await db.postMetrics.findFirst({

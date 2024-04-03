@@ -6,7 +6,7 @@ import React from "react";
 const Page = async ({
   searchParams,
 }: {
-  searchParams?: { replyTo: string };
+  searchParams?: { replyTo: string; quoteTo: string };
 }) => {
   const session = await getAuthSession();
   if (!session) return null;
@@ -15,6 +15,17 @@ const Page = async ({
     ? await db.post.findFirst({
         where: {
           id: searchParams?.replyTo,
+        },
+        include: {
+          author: true,
+        },
+      })
+    : null;
+
+  const quotedPost = searchParams?.quoteTo
+    ? await db.post.findFirst({
+        where: {
+          id: searchParams?.quoteTo,
         },
         include: {
           author: true,
@@ -31,6 +42,7 @@ const Page = async ({
             image: session?.user.image ?? "",
           }}
           replyToPost={replyToPost}
+          quotedPost={quotedPost}
         />
       </div>
     </div>

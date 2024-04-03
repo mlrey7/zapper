@@ -181,7 +181,7 @@ const PostInteraction = ({
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant={"ghost"} size={"icon"} onClick={handleRetweet}>
+          <Button variant={"ghost"} size={"icon"}>
             <Repeat
               className={cn("mr-1 h-4 w-4 text-gray-600", {
                 "fill-green-600 text-green-600": currentRetweet,
@@ -197,11 +197,20 @@ const PostInteraction = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem className="flex items-center py-3">
+          <DropdownMenuItem
+            className="flex items-center py-3"
+            onClick={handleRetweet}
+          >
             <Repeat className={cn("mr-2 h-4 w-4")} />
             <p className="text-sm">Repost</p>
           </DropdownMenuItem>
-          <DropdownMenuItem className="flex items-center py-3">
+          <DropdownMenuItem
+            className="flex items-center py-3"
+            onClick={(e: React.MouseEvent) => {
+              e.stopPropagation();
+              router.push(`/compose/post?quoteTo=${postId}`, { scroll: false });
+            }}
+          >
             <PenLine className={cn("mr-2 h-4 w-4")} />
             <p className="text-sm">Quote</p>
           </DropdownMenuItem>

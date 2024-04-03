@@ -10,6 +10,7 @@ import PostInteraction from "./PostInteraction";
 import PostDisplayMoreOptions from "./PostDisplayMoreOptions";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import EmbeddedPost from "./EmbeddedPost";
 
 interface QuoteDisplayProps {
   post: PostAndAuthorAll;
@@ -49,7 +50,7 @@ const QuoteDisplay = ({
 
       <div className="flex w-full flex-col overflow-hidden">
         <div className="flex items-center gap-1">
-          <h6 className="text-sm font-bold">{post.author.name} QUOTE</h6>
+          <h6 className="text-sm font-bold">{post.author.name}</h6>
           <p className="text-sm text-gray-600">@{post.author.username}</p>
           <span className="text-sm text-gray-600">•</span>
           <p className="text-sm text-gray-600">
@@ -66,25 +67,7 @@ const QuoteDisplay = ({
             <PostImageDisplay images={postContent.images} />
           </div>
         )}
-        <div className="mt-4 rounded-3xl border">
-          <div className="flex flex-col gap-1 p-3">
-            <div className="flex items-center gap-1">
-              <UserAvatar user={quotedPost.author} className="h-6 w-6" />
-              <h6 className="text-sm font-bold">{quotedPost.author.name}</h6>
-              <p className="text-sm text-gray-600">
-                @{quotedPost.author.username}
-              </p>
-              <span className="text-sm text-gray-600">•</span>
-              <p className="text-sm text-gray-600">
-                {formatTimeToNow(new Date(quotedPost.createdAt))}
-              </p>
-            </div>
-            <p className="max-h-[500px] text-ellipsis text-wrap break-words text-sm">
-              {quotedPostContent.data.text}
-            </p>
-          </div>
-          <PostImageDisplay images={quotedPostContent.data.images} isEmbedded />
-        </div>
+        <EmbeddedPost className="mt-4" embeddedPost={quotedPost} />
         <div className="mt-3">
           <PostInteraction
             initialRepliesAmount={post.postMetrics?.repliesCount ?? 0}
