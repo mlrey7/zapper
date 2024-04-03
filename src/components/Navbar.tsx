@@ -17,7 +17,7 @@ const Navbar = ({ children }: { children?: React.ReactNode }) => {
 
   return (
     <div
-      className="fixed flex flex-col gap-12 py-4 pr-4"
+      className="fixed flex flex-col gap-12 py-4 pr-4 lg:w-64"
       style={{
         right: navPositionRight,
       }}

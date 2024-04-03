@@ -10,6 +10,11 @@ const PostComments = async ({ replyToId }: { replyToId: string }) => {
     include: {
       author: true,
       postMetrics: true,
+      quoteTo: {
+        include: {
+          author: true,
+        },
+      },
     },
   });
 
