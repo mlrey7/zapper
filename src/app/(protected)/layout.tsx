@@ -1,6 +1,19 @@
 import Navbar from "@/components/Navbar";
 import NavbarProfile from "@/components/NavbarProfile";
 import Sidebar from "@/components/Sidebar";
+import { Loader2 } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const NavbarCSR = dynamic(() => import("@/components/Navbar"), {
+  ssr: false,
+  loading: () => {
+    return (
+      <div className="flex h-full w-full items-center justify-center p-4">
+        <Loader2 className="animate-spin text-blue-500" />
+      </div>
+    );
+  },
+});
 
 const Layout = ({
   children,
@@ -26,9 +39,9 @@ const Layout = ({
       <div className="container grid grid-cols-12">
         {postModal}
         <div className="col-span-3">
-          <Navbar>
+          <NavbarCSR>
             <NavbarProfile />
-          </Navbar>
+          </NavbarCSR>
         </div>
         <div className="col-span-6 border-x">{children}</div>
         <div className="col-span-3">

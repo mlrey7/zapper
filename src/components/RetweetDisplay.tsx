@@ -40,7 +40,7 @@ const RetweetDisplay = ({
     <div
       className="flex cursor-pointer flex-col gap-1 border-b px-4 py-3"
       onClick={() => {
-        router.push(`/${post.author.username}/status/${post.id}`);
+        router.push(`/${quotedPost.author.username}/status/${quotedPost.id}`);
       }}
     >
       <div className="-mt-1 flex items-center gap-3 ">
