@@ -11,9 +11,10 @@ import CreateComment from "./CreateComment";
 
 interface PostDetailProps {
   post: ExtendedPost;
+  currentRetweet: boolean;
 }
 
-const PostDetail = async ({ post }: PostDetailProps) => {
+const PostDetail = async ({ post, currentRetweet }: PostDetailProps) => {
   const session = await getAuthSession();
 
   const postContent = PostContentValidator.safeParse(post.content);
@@ -56,6 +57,7 @@ const PostDetail = async ({ post }: PostDetailProps) => {
             initialRetweetsAmount={post.retweets.length}
             postId={post.id}
             initialLike={currentLike}
+            initialRetweet={currentRetweet}
           />
         </div>
         <CreateComment
