@@ -74,9 +74,6 @@ const ModalCreatePost = ({
 
   const clickOutsideRef = useClickOutside(() => {
     router.back();
-    startTransition(() => {
-      router.refresh();
-    });
   });
 
   const { mutate: createPost, isPending } = useMutation({
