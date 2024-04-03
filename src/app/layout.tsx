@@ -18,8 +18,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={cn("min-h-screen antialiased", inter.className, "dark")}>
+    <html lang="en" className="overflow-y-scroll">
+      <body
+        className={cn(
+          "min-h-screen !min-w-full antialiased",
+          inter.className,
+          "dark ",
+        )}
+      >
         <Providers>
           {children}
           <Toaster />
