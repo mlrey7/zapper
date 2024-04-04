@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleX, Loader2, X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import LoadingImage from "./LoadingImage";
 import {
   Carousel,

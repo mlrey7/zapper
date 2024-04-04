@@ -5,7 +5,6 @@ import UserAvatar from "./UserAvatar";
 import { User } from "@prisma/client";
 import {
   CalendarClock,
-  Earth,
   Image as LucideImage,
   ListTodo,
   MapPin,
@@ -16,14 +15,14 @@ import TextareaAutosize from "react-textarea-autosize";
 import { Button, buttonVariants } from "./ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { PostCreationRequest } from "@/lib/validators/post";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { toast } from "@/hooks/use-toast";
 import { useUploadThing } from "@/lib/uploadthing";
 import { generateMimeTypes } from "uploadthing/client";
 import UploadImageDisplay from "./UploadImageDisplay";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { ExtendedPost, PostAndAuthor } from "@/types/db";
+import { PostAndAuthor } from "@/types/db";
 interface CreateCommentProps {
   user: Pick<User, "name" | "image">;
   replyToPost: PostAndAuthor;

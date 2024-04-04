@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "./ui/command";
+import { Command, CommandEmpty, CommandInput, CommandList } from "./ui/command";
 import { useState } from "react";
 
 const Searchbar = () => {

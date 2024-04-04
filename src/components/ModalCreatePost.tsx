@@ -2,7 +2,7 @@
 "use client";
 
 import UserAvatar from "./UserAvatar";
-import { Post, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import {
   CalendarClock,
   Earth,
@@ -20,7 +20,7 @@ import {
   PostContentValidator,
   PostCreationRequest,
 } from "@/lib/validators/post";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { toast } from "@/hooks/use-toast";
 import { useUploadThing } from "@/lib/uploadthing";
 import { generateMimeTypes } from "uploadthing/client";
@@ -28,7 +28,7 @@ import UploadImageDisplay from "./UploadImageDisplay";
 import { useRouter } from "next/navigation";
 import CloseModal from "./CloseModal";
 import { useClickOutside } from "@mantine/hooks";
-import { ExtendedPost, PostAndAuthor } from "@/types/db";
+import { PostAndAuthor } from "@/types/db";
 import { formatTimeToNow } from "@/lib/utils";
 import EmbeddedPost from "./EmbeddedPost";
 
