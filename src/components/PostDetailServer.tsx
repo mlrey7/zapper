@@ -1,12 +1,16 @@
 import { getAuthSession } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { PostContentValidator } from "@/lib/validators/post";
-import { PostAndAuthor, PostAndAuthorAll } from "@/types/db";
+import {
+  PostAndAuthor,
+  PostAndAuthorAll,
+  PostAndAuthorAllWithReply,
+} from "@/types/db";
 import React from "react";
 import PostDetailClient from "./PostDetailClient";
 
 interface PostDetailServerProps {
-  post: PostAndAuthorAll;
+  post: PostAndAuthorAllWithReply;
 }
 
 const PostDetailServer = async ({ post }: PostDetailServerProps) => {
@@ -28,6 +32,7 @@ const PostDetailServer = async ({ post }: PostDetailServerProps) => {
       authorId: session.user.id,
     },
   });
+
   if (!postContent.success) return null;
 
   return (
@@ -41,6 +46,7 @@ const PostDetailServer = async ({ post }: PostDetailServerProps) => {
         image: session.user.image ?? "",
         username: session.user.username ?? "",
       }}
+      connected={!!post.replyTo}
     />
   );
 };

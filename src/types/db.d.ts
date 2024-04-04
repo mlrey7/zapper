@@ -16,3 +16,7 @@ export type PostAndAuthor = Post & {
 export type PostAndAuthorAll = PostAndAuthor & {
   quoteTo: PostAndAuthor | null;
 };
+
+export type PostAndAuthorAllWithReply = PostAndAuthorAll & {
+  replyTo: PostAndAuthorAll | null;
+};

@@ -1,8 +1,13 @@
 import PostComments from "@/components/PostComments";
 import PostDetailServer from "@/components/PostDetailServer";
+import PostDisplayServer from "@/components/PostDisplayServer";
 import { db } from "@/lib/db";
 import { redis } from "@/lib/redis";
-import { PostAndAuthorAll } from "@/types/db";
+import {
+  PostAndAuthor,
+  PostAndAuthorAll,
+  PostAndAuthorAllWithReply,
+} from "@/types/db";
 import { LoaderCircle } from "lucide-react";
 import { Suspense } from "react";
 
@@ -20,11 +25,11 @@ function omit<Data extends object, Keys extends keyof Data>(
 }
 
 const Page = async ({ params }: { params: { postId: string } }) => {
-  let post: PostAndAuthorAll | null;
+  let post: PostAndAuthorAllWithReply | null;
 
   const cachedPostWithoutMetrics = (await redis.hgetall(
     `post:${params.postId}`,
-  )) as Omit<PostAndAuthorAll, "postMetrics"> | null;
+  )) as Omit<PostAndAuthorAllWithReply, "postMetrics"> | null;
 
   if (!cachedPostWithoutMetrics) {
     post = await db.post.findFirst({
@@ -46,23 +51,54 @@ const Page = async ({ params }: { params: { postId: string } }) => {
             postMetrics: true,
           },
         },
+        replyTo: {
+          include: {
+            author: true,
+            postMetrics: true,
+            quoteTo: {
+              include: {
+                author: true,
+                postMetrics: true,
+              },
+            },
+          },
+        },
       },
     });
 
     if (post) {
-      if (post.quoteTo) {
-        const { postMetrics, ...strippedQuote } = post.quoteTo;
-        const strippedPost = {
-          ...post,
-          quoteTo: strippedQuote,
+      let strippedReply: PostAndAuthorAll | null = null;
+      let strippedQuote: PostAndAuthor | null = null;
+
+      if (post.replyTo) {
+        let strippedReplyQuote: PostAndAuthor | null = null;
+        if (post.replyTo.quoteTo) {
+          strippedReplyQuote = omit(post.replyTo.quoteTo, ["postMetrics"]);
+        }
+
+        strippedReply = omit(post.replyTo, ["postMetrics"]);
+        strippedReply = {
+          ...strippedReply,
+          quoteTo: strippedReplyQuote,
         };
-        await redis.hset(
-          `post:${params.postId}`,
-          omit(strippedPost, ["postMetrics"]),
-        );
-      } else {
-        await redis.hset(`post:${params.postId}`, omit(post, ["postMetrics"]));
       }
+
+      if (post.quoteTo) {
+        strippedQuote = omit(post.quoteTo, ["postMetrics"]);
+      }
+
+      const strippedPost = {
+        ...post,
+        quoteTo: strippedQuote,
+        replyTo: strippedReply,
+      };
+
+      await redis.hset(
+        `post:${params.postId}`,
+        omit(strippedPost, ["postMetrics"]),
+      );
+
+      await redis.expire(`post:${params.postId}`, 3600);
     }
   } else {
     const postMetrics = await db.postMetrics.findFirst({
@@ -79,6 +115,13 @@ const Page = async ({ params }: { params: { postId: string } }) => {
 
   return (
     <div className="mt-16 min-h-screen">
+      {post?.replyTo && (
+        <PostDisplayServer
+          post={post.replyTo}
+          className="border-none"
+          connected
+        />
+      )}
       <PostDetailServer post={post!} />
       <Suspense
         fallback={

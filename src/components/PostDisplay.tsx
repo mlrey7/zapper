@@ -3,7 +3,7 @@
 import { ExtendedPost, PostAndAuthor } from "@/types/db";
 import React from "react";
 import UserAvatar from "./UserAvatar";
-import { formatTimeToNow } from "@/lib/utils";
+import { cn, formatTimeToNow } from "@/lib/utils";
 import { PostContentType } from "@/lib/validators/post";
 import PostImageDisplay from "./PostImageDisplay";
 import PostInteraction from "./PostInteraction";
@@ -16,6 +16,8 @@ interface PostDisplayProps {
   currentLike: boolean;
   currentRetweet: boolean;
   postContent: PostContentType;
+  className?: string;
+  connected?: boolean;
 }
 
 const PostDisplay = ({
@@ -23,6 +25,8 @@ const PostDisplay = ({
   currentLike,
   currentRetweet,
   postContent,
+  className,
+  connected,
 }: PostDisplayProps) => {
   const router = useRouter();
   const isRetweet =
@@ -37,18 +41,27 @@ const PostDisplay = ({
 
   return (
     <div
-      className="flex cursor-pointer items-start gap-3 border-b px-4 py-3"
+      className={cn(
+        "flex cursor-pointer items-start gap-3 border-b px-4 py-3",
+        {
+          "pb-0": connected,
+        },
+        className,
+      )}
       onClick={() => {
         router.push(`/${post.author.username}/status/${post.id}`);
       }}
     >
-      <UserAvatar
-        user={post.author}
-        onClick={(e: React.MouseEvent) => {
-          e.stopPropagation();
-          router.push(`/${post.author.username}`);
-        }}
-      />
+      <div className="flex flex-col items-center self-stretch">
+        <UserAvatar
+          user={post.author}
+          onClick={(e: React.MouseEvent) => {
+            e.stopPropagation();
+            router.push(`/${post.author.username}`);
+          }}
+        />
+        {connected && <div className="mt-1 w-[2px] flex-1 bg-gray-600" />}
+      </div>
 
       <div className="flex w-full flex-col overflow-hidden">
         <div className="flex items-center gap-1">

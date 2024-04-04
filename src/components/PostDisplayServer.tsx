@@ -9,15 +9,17 @@ import QuoteDisplay from "./QuoteDisplay";
 
 interface PostDisplayServerProps {
   post: PostAndAuthorAll;
+  className?: string;
+  connected?: boolean;
 }
 
-const PostDisplayServer = async ({ post }: PostDisplayServerProps) => {
+const PostDisplayServer = async ({
+  post,
+  className,
+  connected,
+}: PostDisplayServerProps) => {
   const session = await getAuthSession();
-
   const postContent = PostContentValidator.safeParse(post.content);
-  const quotedPostContent = PostContentValidator.safeParse(
-    post.quoteTo?.content,
-  );
 
   if (!session) return null;
 
@@ -48,6 +50,8 @@ const PostDisplayServer = async ({ post }: PostDisplayServerProps) => {
         currentRetweet={!!currentRetweet}
         post={post}
         postContent={postContent.data}
+        className={className}
+        connected={connected}
       />
     ) : (
       <RetweetDisplay
@@ -55,6 +59,8 @@ const PostDisplayServer = async ({ post }: PostDisplayServerProps) => {
         currentRetweet={!!currentRetweet}
         post={post}
         postContent={postContent.data}
+        className={className}
+        connected={connected}
       />
     )
   ) : (
@@ -63,6 +69,8 @@ const PostDisplayServer = async ({ post }: PostDisplayServerProps) => {
       currentRetweet={!!currentRetweet}
       post={post}
       postContent={postContent.data}
+      className={className}
+      connected={connected}
     />
   );
 };
