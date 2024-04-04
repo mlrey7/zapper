@@ -1,8 +1,9 @@
 import PostComments from "@/components/PostComments";
 import PostDetailServer from "@/components/PostDetailServer";
-import PostDisplayServer from "@/components/PostDisplayServer";
+import PostDisplayServer from "@/components/postDisplay/PostDisplayServer";
 import { db } from "@/lib/db";
 import { redis } from "@/lib/redis";
+import { omit } from "@/lib/utils";
 import {
   PostAndAuthor,
   PostAndAuthorAll,
@@ -10,19 +11,6 @@ import {
 } from "@/types/db";
 import { LoaderCircle } from "lucide-react";
 import { Suspense } from "react";
-
-function omit<Data extends object, Keys extends keyof Data>(
-  data: Data,
-  keys: Keys[],
-): Omit<Data, Keys> {
-  const result = { ...data };
-
-  for (const key of keys) {
-    delete result[key];
-  }
-
-  return result as Omit<Data, Keys>;
-}
 
 const Page = async ({ params }: { params: { postId: string } }) => {
   let post: PostAndAuthorAllWithReply | null;

@@ -2,14 +2,14 @@
 
 import { PostAndAuthorAll } from "@/types/db";
 import React from "react";
-import UserAvatar from "./UserAvatar";
+import UserAvatar from "../UserAvatar";
 import { cn, formatTimeToNow } from "@/lib/utils";
 import { PostContentType, PostContentValidator } from "@/lib/validators/post";
-import PostImageDisplay from "./PostImageDisplay";
-import PostInteraction from "./PostInteraction";
+import PostImageDisplay from "../PostImageDisplay";
+import PostInteraction from "../PostInteraction";
 import PostDisplayMoreOptions from "./PostDisplayMoreOptions";
 import { useRouter } from "next/navigation";
-import EmbeddedPost from "./EmbeddedPost";
+import EmbeddedPost from "../EmbeddedPost";
 import { Repeat } from "lucide-react";
 
 interface PostDisplayClientProps {

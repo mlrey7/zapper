@@ -3,14 +3,14 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Zap, Home, Search, Bell, Mail } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   navigationMenuTriggerStyle,
-} from "./ui/navigation-menu";
+} from "../ui/navigation-menu";
 import { usePathname, useRouter } from "next/navigation";
 
 const NavbarMain = () => {

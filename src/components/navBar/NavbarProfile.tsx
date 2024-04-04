@@ -1,6 +1,6 @@
 import { getAuthSession } from "@/lib/auth";
 import React from "react";
-import UserAvatar from "./UserAvatar";
+import UserAvatar from "../UserAvatar";
 import { Ellipsis } from "lucide-react";
 
 const NavbarProfile = async () => {

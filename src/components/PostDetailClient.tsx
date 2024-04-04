@@ -1,8 +1,7 @@
-import { getAuthSession } from "@/lib/auth";
-import { PostContentType, PostContentValidator } from "@/lib/validators/post";
-import { ExtendedPost, PostAndAuthor, PostAndAuthorAll } from "@/types/db";
+import { PostContentType } from "@/lib/validators/post";
+import { PostAndAuthorAll } from "@/types/db";
 import React from "react";
-import PostDisplayMoreOptions from "./PostDisplayMoreOptions";
+import PostDisplayMoreOptions from "./postDisplay/PostDisplayMoreOptions";
 import PostImageDisplay from "./PostImageDisplay";
 import PostInteraction from "./PostInteraction";
 import UserAvatar from "./UserAvatar";

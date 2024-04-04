@@ -1,5 +1,5 @@
 import React from "react";
-import PostDisplayServer from "./PostDisplayServer";
+import PostDisplayServer from "./postDisplay/PostDisplayServer";
 import { db } from "@/lib/db";
 
 const PostComments = async ({ replyToId }: { replyToId: string }) => {

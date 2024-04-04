@@ -1,11 +1,7 @@
 import { getAuthSession } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { PostContentValidator } from "@/lib/validators/post";
-import {
-  PostAndAuthor,
-  PostAndAuthorAll,
-  PostAndAuthorAllWithReply,
-} from "@/types/db";
+import { PostAndAuthorAllWithReply } from "@/types/db";
 import React from "react";
 import PostDetailClient from "./PostDetailClient";
 

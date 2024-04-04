@@ -58,3 +58,16 @@ export function formatCompactNumber(number: number) {
   const formatter = Intl.NumberFormat("en", { notation: "compact" });
   return formatter.format(number);
 }
+
+export function omit<Data extends object, Keys extends keyof Data>(
+  data: Data,
+  keys: Keys[],
+): Omit<Data, Keys> {
+  const result = { ...data };
+
+  for (const key of keys) {
+    delete result[key];
+  }
+
+  return result as Omit<Data, Keys>;
+}
