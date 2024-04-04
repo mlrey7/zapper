@@ -1,6 +1,6 @@
 "use client";
 
-import { ExtendedPost, PostAndAuthor } from "@/types/db";
+import { PostAndAuthorAll } from "@/types/db";
 import React from "react";
 import UserAvatar from "./UserAvatar";
 import { cn, formatTimeToNow } from "@/lib/utils";
@@ -9,10 +9,10 @@ import PostImageDisplay from "./PostImageDisplay";
 import PostInteraction from "./PostInteraction";
 import PostDisplayMoreOptions from "./PostDisplayMoreOptions";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import EmbeddedPost from "./EmbeddedPost";
 
 interface PostDisplayProps {
-  post: PostAndAuthor;
+  post: PostAndAuthorAll;
   currentLike: boolean;
   currentRetweet: boolean;
   postContent: PostContentType;
@@ -29,15 +29,14 @@ const PostDisplay = ({
   connected,
 }: PostDisplayProps) => {
   const router = useRouter();
-  const isRetweet =
-    post.quoteToId !== null &&
-    postContent.text === "" &&
-    postContent.images.length === 0;
-  const isQuote =
-    post.quoteToId !== null &&
-    (postContent.text !== "" || postContent.images.length > 0);
 
-  const postInteractivityId = isRetweet ? post.quoteToId! : post.id;
+  const quotedPost = post.quoteTo;
+  const isRetweetPost =
+    !!quotedPost && postContent.text === "" && postContent.images.length === 0;
+  const isQuotePost =
+    !!quotedPost && (postContent.text !== "" || postContent.images.length > 0);
+
+  const postInteractivityId = isRetweetPost ? quotedPost.id : post.id;
 
   return (
     <div
@@ -81,6 +80,9 @@ const PostDisplay = ({
           <div className="mt-4">
             <PostImageDisplay images={postContent.images} />
           </div>
+        )}
+        {isQuotePost && (
+          <EmbeddedPost className="mt-4" embeddedPost={quotedPost} />
         )}
         <div className="mt-3">
           <PostInteraction

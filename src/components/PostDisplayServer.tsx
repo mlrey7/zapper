@@ -5,7 +5,6 @@ import { PostAndAuthor, PostAndAuthorAll } from "@/types/db";
 import React from "react";
 import PostDisplay from "./PostDisplay";
 import RetweetDisplay from "./RetweetDisplay";
-import QuoteDisplay from "./QuoteDisplay";
 
 interface PostDisplayServerProps {
   post: PostAndAuthorAll;
@@ -39,30 +38,20 @@ const PostDisplayServer = async ({
 
   if (!postContent.success) return null;
 
-  const isQuote =
+  const isRetweetPost =
     post.quoteToId !== null &&
-    (postContent.data.text !== "" || postContent.data.images.length > 0);
+    postContent.data.text === "" &&
+    postContent.data.images.length === 0;
 
-  return post.quoteToId ? (
-    isQuote ? (
-      <QuoteDisplay
-        currentLike={!!currentLike}
-        currentRetweet={!!currentRetweet}
-        post={post}
-        postContent={postContent.data}
-        className={className}
-        connected={connected}
-      />
-    ) : (
-      <RetweetDisplay
-        currentLike={!!currentLike}
-        currentRetweet={!!currentRetweet}
-        post={post}
-        postContent={postContent.data}
-        className={className}
-        connected={connected}
-      />
-    )
+  return isRetweetPost ? (
+    <RetweetDisplay
+      currentLike={!!currentLike}
+      currentRetweet={!!currentRetweet}
+      post={post}
+      postContent={postContent.data}
+      className={className}
+      connected={connected}
+    />
   ) : (
     <PostDisplay
       currentLike={!!currentLike}
