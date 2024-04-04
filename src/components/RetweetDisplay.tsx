@@ -1,6 +1,6 @@
 "use client";
 
-import { ExtendedPost, PostAndAuthor, PostAndAuthorAll } from "@/types/db";
+import { PostAndAuthorAll } from "@/types/db";
 import React from "react";
 import UserAvatar from "./UserAvatar";
 import { cn, formatTimeToNow } from "@/lib/utils";
@@ -9,7 +9,6 @@ import PostImageDisplay from "./PostImageDisplay";
 import PostInteraction from "./PostInteraction";
 import PostDisplayMoreOptions from "./PostDisplayMoreOptions";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Repeat } from "lucide-react";
 
 interface RetweetDisplayProps {
@@ -32,13 +31,13 @@ const RetweetDisplay = ({
   const router = useRouter();
 
   const quotedPost = post.quoteTo!;
-
   const quotedPostContent = PostContentValidator.safeParse(quotedPost.content);
 
   if (!quotedPostContent.success) return null;
-  const initialRepliesAmount = post.postMetrics?.repliesCount ?? 0;
-  const initialLikesAmount = post.postMetrics?.likesCount ?? 0;
-  const initialRetweetsAmount = post.postMetrics?.retweetsCount ?? 0;
+
+  const initialRepliesAmount = quotedPost.postMetrics?.repliesCount ?? 0;
+  const initialLikesAmount = quotedPost.postMetrics?.likesCount ?? 0;
+  const initialRetweetsAmount = quotedPost.postMetrics?.retweetsCount ?? 0;
 
   return (
     <div

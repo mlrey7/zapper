@@ -1,7 +1,7 @@
 import { getAuthSession } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { PostContentValidator } from "@/lib/validators/post";
-import { PostAndAuthor, PostAndAuthorAll } from "@/types/db";
+import { PostAndAuthorAll } from "@/types/db";
 import React from "react";
 import PostDisplay from "./PostDisplay";
 import RetweetDisplay from "./RetweetDisplay";
