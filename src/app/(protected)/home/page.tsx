@@ -1,14 +1,11 @@
 import MiniCreatePost from "@/components/MiniCreatePost";
 import { getAuthSession } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import React, { Suspense } from "react";
 import PostFeed from "@/components/PostFeed";
 import { LoaderCircle } from "lucide-react";
 
 const Page = async () => {
   const session = await getAuthSession();
-
-  if (!session) redirect("/");
 
   return (
     <div className="mt-16 flex min-h-screen flex-col items-center">

@@ -1,7 +1,9 @@
 import { NavbarCSR } from "@/components/navBar/NavBarCSR";
 import Sidebar from "@/components/Sidebar";
+import { getAuthSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-const Layout = ({
+const Layout = async ({
   children,
   postModal,
   headerMain,
@@ -12,6 +14,9 @@ const Layout = ({
   headerMain: React.ReactNode;
   headerSide: React.ReactNode;
 }) => {
+  const session = await getAuthSession();
+  if (!session) redirect("/");
+
   return (
     <>
       <div className="container fixed inset-x-0 z-20 grid grid-cols-12">

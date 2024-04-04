@@ -1,7 +1,7 @@
-import React from "react";
+import { redirect } from "next/navigation";
 
-const Page = () => {
-  return <div>Page</div>;
+const Page = ({ username, postId }: { username: string; postId: string }) => {
+  redirect(`/${username}/status/${postId}`);
 };
 
 export default Page;
