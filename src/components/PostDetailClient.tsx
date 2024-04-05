@@ -17,7 +17,8 @@ interface PostDetailClientProps {
   currentRetweet: boolean;
   postContent: PostContentType;
   user: Pick<User, "name" | "username" | "image">;
-  connected?: boolean;
+  connected: boolean;
+  showImages: boolean;
 }
 
 const PostDetailClient = ({
@@ -27,6 +28,7 @@ const PostDetailClient = ({
   postContent,
   user,
   connected,
+  showImages,
 }: PostDetailClientProps) => {
   return (
     <div className={cn("border-b px-4 py-3", { "pt-0": connected })}>
@@ -50,7 +52,13 @@ const PostDetailClient = ({
             {postContent.text}
           </p>
 
-          <PostImageDisplay images={postContent.images} />
+          {showImages && (
+            <PostImageDisplay
+              images={postContent.images}
+              postId={post.id}
+              username={post.author.username}
+            />
+          )}
 
           {!!post.quoteTo && <EmbeddedPost embeddedPost={post.quoteTo} />}
 

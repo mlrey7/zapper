@@ -1,15 +1,21 @@
 import { getAuthSession } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { PostContentValidator } from "@/lib/validators/post";
-import { PostAndAuthorAllWithReply } from "@/types/db";
+import { PostAndAuthorAll } from "@/types/db";
 import React from "react";
 import PostDetailClient from "./PostDetailClient";
 
 interface PostDetailServerProps {
-  post: PostAndAuthorAllWithReply;
+  post: PostAndAuthorAll;
+  connected?: boolean;
+  showImages?: boolean;
 }
 
-const PostDetailServer = async ({ post }: PostDetailServerProps) => {
+const PostDetailServer = async ({
+  post,
+  connected = false,
+  showImages = true,
+}: PostDetailServerProps) => {
   const session = await getAuthSession();
 
   if (!session) return null;
@@ -42,7 +48,8 @@ const PostDetailServer = async ({ post }: PostDetailServerProps) => {
         image: session.user.image ?? "",
         username: session.user.username ?? "",
       }}
-      connected={!!post.replyTo}
+      connected={connected}
+      showImages={showImages}
     />
   );
 };

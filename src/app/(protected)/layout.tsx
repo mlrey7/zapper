@@ -8,17 +8,20 @@ const Layout = async ({
   postModal,
   headerMain,
   headerSide,
+  postImageDetail,
 }: {
   children: React.ReactNode;
   postModal: React.ReactNode;
   headerMain: React.ReactNode;
   headerSide: React.ReactNode;
+  postImageDetail: React.ReactNode;
 }) => {
   const session = await getAuthSession();
   if (!session) redirect("/");
 
   return (
     <>
+      {postImageDetail}
       <div className="container fixed inset-x-0 z-20 grid grid-cols-12">
         <div className="pointer-events-none col-span-3 w-full" />
         <div className="col-span-6 w-full border-x bg-background/80 backdrop-blur-md">

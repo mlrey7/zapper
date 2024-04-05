@@ -110,7 +110,7 @@ const Page = async ({ params }: { params: { postId: string } }) => {
           connected
         />
       )}
-      <PostDetailServer post={post!} />
+      <PostDetailServer post={post!} connected={!!post!.replyTo} />
       <Suspense
         fallback={
           <div className="flex w-full items-center justify-center pt-16">
