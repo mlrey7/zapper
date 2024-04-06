@@ -25,7 +25,7 @@ const Page = async ({
   let post: PostAndAuthorAll | null = null;
   const cachedPostWithoutMetrics = (await redis.hgetall(
     `post:${postId}`,
-  )) as PostAndAuthorAll;
+  )) as PostAndAuthorAll | null; 
 
   if (!cachedPostWithoutMetrics) {
     post = await db.post.findFirst({
@@ -57,7 +57,7 @@ const Page = async ({
     });
 
     post = {
-      ...cachedPostWithoutMetrics!,
+      ...cachedPostWithoutMetrics,
       postMetrics,
     };
   }
