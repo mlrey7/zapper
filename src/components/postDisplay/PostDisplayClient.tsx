@@ -39,10 +39,21 @@ const PostDisplayClient = ({
     !!quotedPost && (postContent.text !== "" || postContent.images.length > 0);
 
   const activePost = isRetweetPost ? quotedPost : post;
-  const activePostContent = isRetweetPost
-    ? PostContentValidator.parse(quotedPost.content)
-    : postContent;
 
+  let activePostContent: {text: string; images: string[]} | null = null;
+
+  const parsedQuotePostContent = PostContentValidator.safeParse(quotedPost?.content);
+
+  if(isRetweetPost && !parsedQuotePostContent.success) {
+    return null;
+  }
+
+  if(isRetweetPost && parsedQuotePostContent.success) {
+    activePostContent = parsedQuotePostContent.data;
+  } else {
+    activePostContent = postContent;
+  }
+  
   return (
     <div
       className={cn(
