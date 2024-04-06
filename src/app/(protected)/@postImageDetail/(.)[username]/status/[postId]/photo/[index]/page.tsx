@@ -25,7 +25,7 @@ const Page = async ({
   let post: PostAndAuthorAll | null = null;
   const cachedPostWithoutMetrics = (await redis.hgetall(
     `post:${postId}`,
-  )) as PostAndAuthorAll | null; 
+  )) as PostAndAuthorAll | null;
 
   if (!cachedPostWithoutMetrics) {
     post = await db.post.findFirst({
@@ -83,20 +83,23 @@ const Page = async ({
         >
           <div
             className={cn(
-              "container flex max-h-full flex-col items-center",
+              "container flex h-screen flex-col items-center",
               "px-0",
             )}
           >
-            <Image
-              alt={`Image ${index}`}
-              src={imageLink}
-              width={0}
-              height={0}
-              className={cn("h-full w-auto object-contain")}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 75vw"
-            />
+            <div className="flex-1 w-full min-h-0">
+              <Image
+                alt={`Image ${index}`}
+                src={imageLink}
+                width={0}
+                height={0}
+                className={cn("h-full w-full object-contain")}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 75vw"
+                priority={true}
+              />
+            </div>
 
-            <div className="mx-auto flex w-[600px] items-center justify-between p-4">
+            <div className="mx-auto flex w-full max-w-[600px] items-center justify-between p-4">
               <div className="flex">
                 <MessageCircle className="mr-1 h-4 w-4 text-white" />
                 <p className="text-xs text-white">
