@@ -28,7 +28,7 @@ const Page = async ({
   )) as PostAndAuthorAll | null;
 
   if (!cachedPostWithoutMetrics) {
-    post = await db.post.findFirst({
+    post = await db.post.findUnique({
       where: {
         id: postId,
       },
@@ -56,7 +56,7 @@ const Page = async ({
       },
     });
   } else {
-    const postMetrics = await db.postMetrics.findFirst({
+    const postMetrics = await db.postMetrics.findUnique({
       where: {
         postId: postId,
       },

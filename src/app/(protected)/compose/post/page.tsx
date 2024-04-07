@@ -16,7 +16,7 @@ const Page = async ({
   if (!session) redirect("/");
 
   const replyToPost = searchParams?.replyTo
-    ? await db.post.findFirst({
+    ? await db.post.findUnique({
         where: {
           id: searchParams?.replyTo,
         },
@@ -33,7 +33,7 @@ const Page = async ({
     : null;
 
   const quotedPost = searchParams?.quoteTo
-    ? await db.post.findFirst({
+    ? await db.post.findUnique({
         where: {
           id: searchParams?.quoteTo,
         },

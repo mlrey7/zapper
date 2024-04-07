@@ -20,7 +20,7 @@ const Page = async ({ params }: { params: { postId: string } }) => {
   )) as Omit<PostAndAuthorAllWithReply, "postMetrics"> | null;
 
   if (!cachedPostWithoutMetrics) {
-    post = await db.post.findFirst({
+    post = await db.post.findUnique({
       where: {
         id: params.postId,
       },
@@ -107,7 +107,7 @@ const Page = async ({ params }: { params: { postId: string } }) => {
       await redis.expire(`post:${params.postId}`, 3600);
     }
   } else {
-    const postMetrics = await db.postMetrics.findFirst({
+    const postMetrics = await db.postMetrics.findUnique({
       where: {
         postId: params.postId,
       },

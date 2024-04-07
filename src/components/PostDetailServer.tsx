@@ -21,10 +21,12 @@ const PostDetailServer = async ({
   if (!session) return null;
   const postContent = PostContentValidator.safeParse(post.content);
 
-  const currentLike = await db.like.findFirst({
+  const currentLike = await db.like.findUnique({
     where: {
-      postId: post.id,
-      userId: session.user.id,
+      userId_postId: {
+        postId: post.id,
+        userId: session.user.id,
+      },
     },
   });
 

@@ -14,7 +14,7 @@ export async function PATCH(req: Request) {
     const body = await req.json();
     const { postId } = PostLikeValidator.parse(body);
 
-    const postMetric = await db.postMetrics.findFirst({
+    const postMetric = await db.postMetrics.findUnique({
       where: {
         postId,
       },
