@@ -21,7 +21,13 @@ const Page = async ({
           id: searchParams?.replyTo,
         },
         include: {
-          author: true,
+          author: {
+            select: {
+              image: true,
+              name: true,
+              username: true,
+            },
+          },
         },
       })
     : null;
@@ -32,7 +38,13 @@ const Page = async ({
           id: searchParams?.quoteTo,
         },
         include: {
-          author: true,
+          author: {
+            select: {
+              image: true,
+              name: true,
+              username: true,
+            },
+          },
         },
       })
     : null;

@@ -43,7 +43,13 @@ const Page = async ({
         postMetrics: true,
         quoteTo: {
           include: {
-            author: true,
+            author: {
+              select: {
+                image: true,
+                name: true,
+                username: true,
+              },
+            },
             postMetrics: true,
           },
         },

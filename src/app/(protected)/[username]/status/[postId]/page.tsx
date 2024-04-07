@@ -35,17 +35,35 @@ const Page = async ({ params }: { params: { postId: string } }) => {
         postMetrics: true,
         quoteTo: {
           include: {
-            author: true,
+            author: {
+              select: {
+                image: true,
+                name: true,
+                username: true,
+              },
+            },
             postMetrics: true,
           },
         },
         replyTo: {
           include: {
-            author: true,
+            author: {
+              select: {
+                image: true,
+                name: true,
+                username: true,
+              },
+            },
             postMetrics: true,
             quoteTo: {
               include: {
-                author: true,
+                author: {
+                  select: {
+                    image: true,
+                    name: true,
+                    username: true,
+                  },
+                },
                 postMetrics: true,
               },
             },
