@@ -102,7 +102,7 @@ const Page = async ({
             )}
             <PostDetailServer
               post={post}
-              connected={false}
+              connected={!!post.replyTo}
               showImages={false}
             />
             <Suspense
