@@ -40,20 +40,22 @@ const PostDisplayClient = ({
 
   const activePost = isRetweetPost ? quotedPost : post;
 
-  let activePostContent: {text: string; images: string[]} | null = null;
+  let activePostContent: { text: string; images: string[] } | null = null;
 
-  const parsedQuotePostContent = PostContentValidator.safeParse(quotedPost?.content);
+  const parsedQuotePostContent = PostContentValidator.safeParse(
+    quotedPost?.content,
+  );
 
-  if(isRetweetPost && !parsedQuotePostContent.success) {
+  if (isRetweetPost && !parsedQuotePostContent.success) {
     return null;
   }
 
-  if(isRetweetPost && parsedQuotePostContent.success) {
+  if (isRetweetPost && parsedQuotePostContent.success) {
     activePostContent = parsedQuotePostContent.data;
   } else {
     activePostContent = postContent;
   }
-  
+
   return (
     <div
       className={cn(
@@ -108,7 +110,11 @@ const PostDisplayClient = ({
           </p>
           {activePostContent.images.length > 0 && (
             <div className="mt-4">
-              <PostImageDisplay images={activePostContent.images} />
+              <PostImageDisplay
+                images={activePostContent.images}
+                postId={activePost.id}
+                username={activePost.author.username}
+              />
             </div>
           )}
           {isQuotePost && (
