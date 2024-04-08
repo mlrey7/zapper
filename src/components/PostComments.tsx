@@ -1,34 +1,9 @@
 import React from "react";
 import PostDisplayServer from "./postDisplay/PostDisplayServer";
-import { db } from "@/lib/db";
+import { getReplies } from "@/controllers/postController";
 
 const PostComments = async ({ replyToId }: { replyToId: string }) => {
-  const replies = await db.post.findMany({
-    where: {
-      replyToId,
-    },
-    include: {
-      author: {
-        select: {
-          image: true,
-          name: true,
-          username: true,
-        },
-      },
-      postMetrics: true,
-      quoteTo: {
-        include: {
-          author: {
-            select: {
-              image: true,
-              name: true,
-              username: true,
-            },
-          },
-        },
-      },
-    },
-  });
+  const replies = await getReplies(replyToId);
 
   return (
     <ul>

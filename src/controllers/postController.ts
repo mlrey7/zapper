@@ -9,9 +9,9 @@ import { cache } from "react";
 import { redis } from "@/lib/redis";
 import { omit } from "@/lib/utils";
 
-export const getPostsFeed = cache(async () => {
+export const getPostsFeed = cache(() => {
   console.log("UNCACHED: getPostsFeed");
-  return await db.post.findMany({
+  return db.post.findMany({
     where: {
       replyToId: null,
     },
@@ -153,7 +153,7 @@ export const getPostWithQuoteAndReply = cache(async (id: string) => {
   return post;
 });
 
-export const getPost = cache(async (id: string) => {
+export const getPost = cache((id: string) => {
   return db.post.findUnique({
     where: {
       id,
@@ -164,6 +164,35 @@ export const getPost = cache(async (id: string) => {
           image: true,
           name: true,
           username: true,
+        },
+      },
+    },
+  });
+});
+
+export const getReplies = cache((replyToId: string) => {
+  return db.post.findMany({
+    where: {
+      replyToId,
+    },
+    include: {
+      author: {
+        select: {
+          image: true,
+          name: true,
+          username: true,
+        },
+      },
+      postMetrics: true,
+      quoteTo: {
+        include: {
+          author: {
+            select: {
+              image: true,
+              name: true,
+              username: true,
+            },
+          },
         },
       },
     },
