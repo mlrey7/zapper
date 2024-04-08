@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import React from "react";
 import PostFeed from "@/components/PostFeed";
 import ModalCreatePost from "@/components/ModalCreatePost";
+import { getPost } from "@/controllers/postController";
 
 const Page = async ({
   searchParams,
@@ -16,37 +17,11 @@ const Page = async ({
   if (!session) redirect("/");
 
   const replyToPost = searchParams?.replyTo
-    ? await db.post.findUnique({
-        where: {
-          id: searchParams?.replyTo,
-        },
-        include: {
-          author: {
-            select: {
-              image: true,
-              name: true,
-              username: true,
-            },
-          },
-        },
-      })
+    ? await getPost(searchParams.replyTo)
     : null;
 
   const quotedPost = searchParams?.quoteTo
-    ? await db.post.findUnique({
-        where: {
-          id: searchParams?.quoteTo,
-        },
-        include: {
-          author: {
-            select: {
-              image: true,
-              name: true,
-              username: true,
-            },
-          },
-        },
-      })
+    ? await getPost(searchParams.quoteTo)
     : null;
 
   return (

@@ -61,9 +61,6 @@ const PostInteraction = ({
     onMutate: () => {
       setCurrentLike(true);
       setLikesAmount((prev) => prev + 1);
-      startTransition(() => {
-        router.refresh();
-      });
     },
     onError: () => {
       setCurrentLike(false);
@@ -73,6 +70,11 @@ const PostInteraction = ({
         title: "Something went wrong",
         description: "Your vote was not registered please try again",
         variant: "destructive",
+      });
+    },
+    onSuccess: () => {
+      startTransition(() => {
+        router.refresh();
       });
     },
   });
@@ -88,9 +90,6 @@ const PostInteraction = ({
     onMutate: () => {
       setCurrentLike(false);
       setLikesAmount((prev) => prev - 1);
-      startTransition(() => {
-        router.refresh();
-      });
     },
     onError: () => {
       setCurrentLike(true);
@@ -100,6 +99,11 @@ const PostInteraction = ({
         title: "Something went wrong",
         description: "Your vote was not registered please try again",
         variant: "destructive",
+      });
+    },
+    onSuccess: () => {
+      startTransition(() => {
+        router.refresh();
       });
     },
   });

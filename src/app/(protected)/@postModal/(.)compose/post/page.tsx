@@ -1,4 +1,5 @@
 import ModalCreatePost from "@/components/ModalCreatePost";
+import { getPost } from "@/controllers/postController";
 import { getAuthSession } from "@/lib/auth";
 import { db } from "@/lib/db";
 import React from "react";
@@ -12,37 +13,11 @@ const Page = async ({
   if (!session) return null;
 
   const replyToPost = searchParams?.replyTo
-    ? await db.post.findUnique({
-        where: {
-          id: searchParams?.replyTo,
-        },
-        include: {
-          author: {
-            select: {
-              image: true,
-              name: true,
-              username: true,
-            },
-          },
-        },
-      })
+    ? await getPost(searchParams.replyTo)
     : null;
 
   const quotedPost = searchParams?.quoteTo
-    ? await db.post.findUnique({
-        where: {
-          id: searchParams?.quoteTo,
-        },
-        include: {
-          author: {
-            select: {
-              image: true,
-              name: true,
-              username: true,
-            },
-          },
-        },
-      })
+    ? await getPost(searchParams.quoteTo)
     : null;
 
   return (

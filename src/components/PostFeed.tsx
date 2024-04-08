@@ -1,40 +1,9 @@
 import React from "react";
 import PostDisplayServer from "./postDisplay/PostDisplayServer";
-import { db } from "@/lib/db";
-import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
+import { getPostsFeed } from "@/controllers/postController";
 
 const PostFeed = async () => {
-  const posts = await db.post.findMany({
-    where: {
-      replyToId: null,
-    },
-    take: INFINITE_SCROLLING_PAGINATION_RESULTS,
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      author: {
-        select: {
-          image: true,
-          name: true,
-          username: true,
-        },
-      },
-      postMetrics: true,
-      quoteTo: {
-        include: {
-          author: {
-            select: {
-              image: true,
-              name: true,
-              username: true,
-            },
-          },
-          postMetrics: true,
-        },
-      },
-    },
-  });
+  const posts = await getPostsFeed();
 
   return (
     <div className="flex w-full flex-col">
