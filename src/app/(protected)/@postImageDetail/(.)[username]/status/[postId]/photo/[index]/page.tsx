@@ -1,12 +1,11 @@
 import BackButton from "@/components/BackButton";
 import PostComments from "@/components/PostComments";
 import PostDetailServer from "@/components/PostDetailServer";
+import PostDisplayServer from "@/components/postDisplay/PostDisplayServer";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { db } from "@/lib/db";
-import { redis } from "@/lib/redis";
+import { getPostWithQuoteAndReply } from "@/controllers/postController";
 import { cn, formatCompactNumber } from "@/lib/utils";
 import { PostContentValidator } from "@/lib/validators/post";
-import { PostAndAuthorAll } from "@/types/db";
 import {
   BarChart,
   Heart,
@@ -22,53 +21,11 @@ const Page = async ({
 }: {
   params: { postId: string; index: string };
 }) => {
-  let post: PostAndAuthorAll | null = null;
-  const cachedPostWithoutMetrics = (await redis.hgetall(
-    `post:${postId}`,
-  )) as PostAndAuthorAll | null;
+  const post = await getPostWithQuoteAndReply(postId);
 
-  if (!cachedPostWithoutMetrics) {
-    post = await db.post.findUnique({
-      where: {
-        id: postId,
-      },
-      include: {
-        author: {
-          select: {
-            image: true,
-            name: true,
-            username: true,
-          },
-        },
-        postMetrics: true,
-        quoteTo: {
-          include: {
-            author: {
-              select: {
-                image: true,
-                name: true,
-                username: true,
-              },
-            },
-            postMetrics: true,
-          },
-        },
-      },
-    });
-  } else {
-    const postMetrics = await db.postMetrics.findUnique({
-      where: {
-        postId: postId,
-      },
-    });
+  if (!post) return null;
 
-    post = {
-      ...cachedPostWithoutMetrics,
-      postMetrics,
-    };
-  }
-
-  const postContent = PostContentValidator.safeParse(post?.content);
+  const postContent = PostContentValidator.safeParse(post.content);
 
   if (!postContent.success) return null;
   if (!postContent.data.images.length) return null;
@@ -93,7 +50,7 @@ const Page = async ({
               "px-0",
             )}
           >
-            <div className="flex-1 w-full min-h-0">
+            <div className="min-h-0 w-full flex-1">
               <Image
                 alt={`Image ${index}`}
                 src={imageLink}
@@ -109,35 +66,42 @@ const Page = async ({
               <div className="flex">
                 <MessageCircle className="mr-1 h-4 w-4 text-white" />
                 <p className="text-xs text-white">
-                  {formatCompactNumber(post?.postMetrics?.repliesCount ?? 0)}
+                  {formatCompactNumber(post.postMetrics?.repliesCount ?? 0)}
                 </p>
               </div>
 
               <div className="flex">
                 <Repeat className={"mr-1 h-4 w-4 text-white"} />
                 <p className="text-xs text-white">
-                  {formatCompactNumber(post?.postMetrics?.retweetsCount ?? 0)}
+                  {formatCompactNumber(post.postMetrics?.retweetsCount ?? 0)}
                 </p>
               </div>
 
               <div className="flex">
                 <Heart className={"mr-1 h-4 w-4 text-white"} />
                 <p className="text-xs text-white">
-                  {formatCompactNumber(post?.postMetrics?.likesCount ?? 0)}
+                  {formatCompactNumber(post.postMetrics?.likesCount ?? 0)}
                 </p>
               </div>
 
               <div className="flex">
                 <BarChart className="mr-1 h-4 w-4 text-white" />
                 <p className="text-xs text-white">
-                  {formatCompactNumber(post?.postMetrics?.likesCount ?? 0)}
+                  {formatCompactNumber(post.postMetrics?.likesCount ?? 0)}
                 </p>
               </div>
             </div>
           </div>
           <aside className="hidden w-[350px] flex-shrink-0 bg-background md:max-w-[420px] lg:block">
+            {post.replyTo && (
+              <PostDisplayServer
+                post={post.replyTo}
+                className="border-none"
+                connected
+              />
+            )}
             <PostDetailServer
-              post={post!}
+              post={post}
               connected={false}
               showImages={false}
             />
@@ -148,7 +112,7 @@ const Page = async ({
                 </div>
               }
             >
-              <PostComments replyToId={post!.id} />
+              <PostComments replyToId={post.id} />
             </Suspense>
           </aside>
         </div>

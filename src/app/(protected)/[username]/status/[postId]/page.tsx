@@ -6,18 +6,20 @@ import { LoaderCircle } from "lucide-react";
 import { Suspense } from "react";
 
 const Page = async ({ params: { postId } }: { params: { postId: string } }) => {
-  let post = await getPostWithQuoteAndReply(postId);
+  const post = await getPostWithQuoteAndReply(postId);
+
+  if (!post) return null;
 
   return (
     <div className="mt-16 min-h-screen">
-      {post?.replyTo && (
+      {post.replyTo && (
         <PostDisplayServer
           post={post.replyTo}
           className="border-none"
           connected
         />
       )}
-      <PostDetailServer post={post!} connected={!!post!.replyTo} />
+      <PostDetailServer post={post} connected={!!post.replyTo} />
       <Suspense
         fallback={
           <div className="flex w-full items-center justify-center pt-16">
@@ -25,7 +27,7 @@ const Page = async ({ params: { postId } }: { params: { postId: string } }) => {
           </div>
         }
       >
-        <PostComments replyToId={post!.id} />
+        <PostComments replyToId={post.id} />
       </Suspense>
     </div>
   );
