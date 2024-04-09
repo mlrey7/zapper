@@ -22,7 +22,7 @@ const EmbeddedPost = ({ embeddedPost, className }: EmbeddedPostProps) => {
 
   return (
     <div
-      className={cn("rounded-3xl border", className)}
+      className={cn("cursor-pointer rounded-3xl border", className)}
       onClick={(e: React.MouseEvent) => {
         e.stopPropagation();
         router.push(
