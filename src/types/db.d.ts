@@ -20,3 +20,9 @@ export type PostAndAuthorAll = PostAndAuthor & {
 export type PostAndAuthorAllWithReply = PostAndAuthorAll & {
   replyTo: PostAndAuthorAll | null;
 };
+
+export type UserPublic = Omit<User, "email" | "emailVerified">;
+
+export type UserWithPosts = UserPublic & {
+  posts: Array<PostAndAuthorAll>;
+};
