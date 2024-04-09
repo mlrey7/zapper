@@ -1,7 +1,7 @@
 import { getUser } from "@/controllers/userController";
 import HeaderMainClient from "./HeaderMainClient";
 
-const Page = async ({
+const Layout = async ({
   params: { username },
 }: {
   params: { username: string };
@@ -18,4 +18,4 @@ const Page = async ({
   );
 };
 
-export default Page;
+export default Layout;

@@ -4,14 +4,31 @@ import { buttonVariants } from "./ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { useSelectedLayoutSegment } from "next/navigation";
 
 type UserPostsFeedType = "posts" | "replies" | "media" | "likes";
 
+const segmentToUserPostsFeedType = (segment: string | null) => {
+  if (segment === "") {
+    return "posts";
+  } else if (segment === "with_replies") {
+    return "replies";
+  } else if (segment === "media") {
+    return segment;
+  } else if (segment === "likes") {
+    return segment;
+  } else {
+    return "posts";
+  }
+};
+
 const UserPostsSwitch = ({ username }: { username: string }) => {
   const router = useRouter();
+  const segment = useSelectedLayoutSegment();
 
-  const [userPostsFeed, setUserPostsFeed] =
-    useState<UserPostsFeedType>("posts");
+  const [userPostsFeed, setUserPostsFeed] = useState<UserPostsFeedType>(
+    segmentToUserPostsFeedType(segment),
+  );
 
   const handleSwitch = (feedType: UserPostsFeedType) => {
     if (feedType === "posts") router.replace(`/${username}`);
