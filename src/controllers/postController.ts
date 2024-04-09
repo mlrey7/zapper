@@ -211,3 +211,71 @@ export const getReplies = cache((replyToId: string) => {
     },
   });
 });
+
+export const getUserPosts = cache((authorId: string) => {
+  return db.post.findMany({
+    where: {
+      authorId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      postMetrics: true,
+      quoteTo: {
+        include: {
+          author: {
+            select: {
+              image: true,
+              name: true,
+              username: true,
+            },
+          },
+          postMetrics: true,
+        },
+      },
+    },
+  });
+});
+
+export const getUserLikedPosts = cache((userId: string) => {
+  return db.like.findMany({
+    where: {
+      userId,
+    },
+    // orderBy: {
+    //   createdAt: "desc",
+    // },
+    include: {
+      post: {
+        include: {
+          postMetrics: true,
+          quoteTo: {
+            include: {
+              author: {
+                select: {
+                  image: true,
+                  name: true,
+                  username: true,
+                },
+              },
+              postMetrics: true,
+            },
+          },
+          replyTo: {
+            include: {
+              author: {
+                select: {
+                  image: true,
+                  name: true,
+                  username: true,
+                },
+              },
+              postMetrics: true,
+            },
+          },
+        },
+      },
+    },
+  });
+});
