@@ -37,7 +37,10 @@ const Page = async ({
     <div className="grid grid-cols-3 gap-1 p-1">
       {...flattenedPosts.map((post, totalIndex) => {
         return (
-          <Link href={`/${username}/status/${post.id}/photo/${post.index + 1}`}>
+          <Link
+            href={`/${username}/status/${post.id}/photo/${post.index + 1}`}
+            key={post.id + post.image + post.index}
+          >
             <Image
               src={post.image}
               alt={`Post image ${totalIndex}`}
