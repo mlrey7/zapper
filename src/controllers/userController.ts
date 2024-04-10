@@ -13,6 +13,7 @@ export const getUser = cache((username: string) =>
           username,
         },
         include: {
+          userMetrics: true,
           posts: {
             where: {
               replyToId: null,

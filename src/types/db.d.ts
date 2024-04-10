@@ -1,4 +1,11 @@
-import { Like, Post, PostMetrics, Retweet, User } from "@prisma/client";
+import {
+  Like,
+  Post,
+  PostMetrics,
+  Retweet,
+  User,
+  UserMetrics,
+} from "@prisma/client";
 
 export type ExtendedPost = Post & {
   author: Pick<User, "name" | "username" | "image">;
@@ -21,7 +28,9 @@ export type PostAndAuthorAllWithReply = PostAndAuthorAll & {
   replyTo: PostAndAuthorAll | null;
 };
 
-export type UserPublic = Omit<User, "email" | "emailVerified">;
+export type UserPublic = Omit<User, "email" | "emailVerified"> & {
+  userMetrics?: UserMetrics | null;
+};
 
 export type UserWithPosts = UserPublic & {
   posts: Array<PostAndAuthorAll>;
