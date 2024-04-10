@@ -243,9 +243,9 @@ export const getUserLikedPosts = cache((userId: string) => {
     where: {
       userId,
     },
-    // orderBy: {
-    //   createdAt: "desc",
-    // },
+    orderBy: {
+      createdAt: "desc",
+    },
     include: {
       post: {
         include: {
@@ -276,6 +276,21 @@ export const getUserLikedPosts = cache((userId: string) => {
           },
         },
       },
+    },
+  });
+});
+
+export const getUserMediaPosts = cache((userId: string) => {
+  return db.post.findMany({
+    where: {
+      authorId: userId,
+      content: {
+        path: ["images"],
+        not: [],
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
 });
