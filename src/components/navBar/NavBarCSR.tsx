@@ -1,6 +1,6 @@
 import { Loader2 } from "lucide-react";
 import dynamic from "next/dynamic";
-import NavbarProfile from "./NavbarProfile";
+import NavbarProfileServer from "./NavbarProfileServer";
 
 const NavbarDynamic = dynamic(() => import("@/components/navBar/Navbar"), {
   ssr: false,
@@ -15,6 +15,6 @@ const NavbarDynamic = dynamic(() => import("@/components/navBar/Navbar"), {
 
 export const NavbarCSR = () => (
   <NavbarDynamic>
-    <NavbarProfile />
+    <NavbarProfileServer />
   </NavbarDynamic>
 );
