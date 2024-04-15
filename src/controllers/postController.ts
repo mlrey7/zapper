@@ -301,3 +301,11 @@ export const getUserMediaPosts = cache((userId: string) => {
     },
   });
 });
+
+export const getFeed = () => {
+  db.post.findMany({
+    where: {
+      id: { in: ["asfs", "asdfsdf"] },
+    },
+  });
+};

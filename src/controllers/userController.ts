@@ -63,3 +63,11 @@ export const getUser = cache((username: string) =>
     { revalidate: 3600 },
   )(username),
 );
+
+export const getUserMetrics = cache((id: string) => {
+  return db.userMetrics.findUnique({
+    where: {
+      userId: id,
+    },
+  });
+});

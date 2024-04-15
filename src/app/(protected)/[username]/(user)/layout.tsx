@@ -1,5 +1,5 @@
 import UserAvatar from "@/components/UserAvatar";
-import { getUser } from "@/controllers/userController";
+import { getUser, getUserMetrics } from "@/controllers/userController";
 import UserInteractivity from "./UserInteractivity";
 import UserPostsSwitch from "@/components/UserPostsSwitch";
 import { CalendarDays, MapPin } from "lucide-react";
@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import Image from "next/image";
 
 import { getAuthSession } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { isFollowingUser } from "@/controllers/followController";
 
 const Layout = async ({
   children,
@@ -22,20 +22,8 @@ const Layout = async ({
   if (!user) return null;
   if (!session) return null;
 
-  const isFollowing = await db.follows.findUnique({
-    where: {
-      followingId_followedById: {
-        followedById: session.user.id,
-        followingId: user.id,
-      },
-    },
-  });
-
-  const userMetrics = await db.userMetrics.findUnique({
-    where: {
-      userId: user.id,
-    },
-  });
+  const isFollowing = await isFollowingUser(session.user.id, user.id);
+  const userMetrics = await getUserMetrics(user.id);
 
   return (
     <div className="mt-16 flex flex-col">
