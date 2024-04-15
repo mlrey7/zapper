@@ -137,6 +137,7 @@ const MiniCreatePost = ({ user }: MiniCreatePostProps) => {
           placeholder="What is happening?!"
           onChange={(e) => setText(e.target.value)}
           className="flex min-h-[40px] w-full resize-none rounded-md bg-background px-2 text-xl outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+          name="post content"
         />
         <OnDeleteImageContext.Provider value={onDeleteImage}>
           <UploadImageDisplay

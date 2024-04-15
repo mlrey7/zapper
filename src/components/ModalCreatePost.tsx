@@ -211,6 +211,7 @@ const ModalCreatePost = ({
             minRows={!!quotedPost ? 2 : 4}
             onChange={(e) => setText(e.target.value)}
             className="mt-1 flex min-h-[40px] w-full resize-none rounded-md bg-background pl-2 text-xl outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            name="post content"
           />
         </div>
 

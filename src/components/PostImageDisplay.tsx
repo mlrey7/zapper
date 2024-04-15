@@ -23,7 +23,9 @@ const PostImageDisplay = ({
   const handleOnClick = (imageIndex: number) => (e: React.MouseEvent) => {
     if (username && postId) {
       e.stopPropagation();
-      navigate.push(`/${username}/status/${postId}/photo/${imageIndex + 1}`);
+      navigate.push(`/${username}/status/${postId}/photo/${imageIndex + 1}`, {
+        scroll: false,
+      });
     }
   };
 

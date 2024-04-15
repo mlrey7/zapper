@@ -150,6 +150,7 @@ const CreateComment = ({ user, replyToPost }: CreateCommentProps) => {
               onChange={(e) => setText(e.target.value)}
               className="flex  w-full resize-none rounded-md bg-background px-2 text-xl outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
               onFocus={() => setIsFocused(true)}
+              name="comment content"
             />
             {!isFocused && (
               <Button
