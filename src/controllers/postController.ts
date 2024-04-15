@@ -249,6 +249,13 @@ export const getUserLikedPosts = cache((userId: string) => {
     include: {
       post: {
         include: {
+          author: {
+            select: {
+              image: true,
+              name: true,
+              username: true,
+            },
+          },
           postMetrics: true,
           quoteTo: {
             include: {

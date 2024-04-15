@@ -13,7 +13,6 @@ export const getUser = cache((username: string) =>
           username,
         },
         include: {
-          userMetrics: true,
           posts: {
             where: {
               replyToId: null,
@@ -60,7 +59,7 @@ export const getUser = cache((username: string) =>
         posts,
       };
     },
-    ["getPost", username],
+    [`getUser: ${username}`],
     { revalidate: 3600 },
   )(username),
 );

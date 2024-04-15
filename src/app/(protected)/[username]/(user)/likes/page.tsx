@@ -14,11 +14,6 @@ const Page = async ({
   const posts = (await getUserLikedPosts(user.id)).map((like) => {
     return {
       ...like.post,
-      author: {
-        image: user.image,
-        name: user.name,
-        username: user.username,
-      },
     };
   });
 

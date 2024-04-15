@@ -28,9 +28,7 @@ export type PostAndAuthorAllWithReply = PostAndAuthorAll & {
   replyTo: PostAndAuthorAll | null;
 };
 
-export type UserPublic = Omit<User, "email" | "emailVerified"> & {
-  userMetrics?: UserMetrics | null;
-};
+export type UserPublic = Omit<User, "email" | "emailVerified">;
 
 export type UserWithPosts = UserPublic & {
   posts: Array<PostAndAuthorAll>;

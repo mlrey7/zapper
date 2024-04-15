@@ -6,6 +6,9 @@ import { CalendarDays, MapPin } from "lucide-react";
 import { format } from "date-fns";
 import Image from "next/image";
 
+import { getAuthSession } from "@/lib/auth";
+import { db } from "@/lib/db";
+
 const Layout = async ({
   children,
   params: { username },
@@ -14,8 +17,25 @@ const Layout = async ({
   params: { username: string };
 }) => {
   const user = await getUser(username);
+  const session = await getAuthSession();
 
   if (!user) return null;
+  if (!session) return null;
+
+  const isFollowing = await db.follows.findUnique({
+    where: {
+      followingId_followedById: {
+        followedById: session.user.id,
+        followingId: user.id,
+      },
+    },
+  });
+
+  const userMetrics = await db.userMetrics.findUnique({
+    where: {
+      userId: user.id,
+    },
+  });
 
   return (
     <div className="mt-16 flex flex-col">
@@ -38,7 +58,11 @@ const Layout = async ({
         </div>
         <div className="flex h-full w-full flex-1 flex-col px-4 py-3">
           <div className="flex justify-end">
-            <UserInteractivity />
+            <UserInteractivity
+              isCurrentUser={user.id === session?.user.id}
+              isFollowing={!!isFollowing}
+              followingId={user.id}
+            />
           </div>
           <div className="pt-6 text-xl font-bold">{user.name}</div>
           <h6 className="text-sm text-gray-600">@{user.username}</h6>
@@ -64,13 +88,13 @@ const Layout = async ({
           <div className="mt-3 flex gap-6">
             <p className="text-sm text-gray-600">
               <span className="text-sm font-semibold text-white">
-                {user.userMetrics?.followingCount}
+                {userMetrics?.followingCount}
               </span>{" "}
               Following
             </p>
             <p className="text-sm text-gray-600">
               <span className="text-sm font-semibold text-white">
-                {user.userMetrics?.followersCount}
+                {userMetrics?.followersCount}
               </span>{" "}
               Followers
             </p>
