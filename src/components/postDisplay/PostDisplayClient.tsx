@@ -16,7 +16,6 @@ interface PostDisplayClientProps {
   post: PostAndAuthorAll;
   className?: string;
   connected?: boolean;
-  userId: string;
 }
 
 const PostDisplayClient = ({

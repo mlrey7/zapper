@@ -1,28 +1,13 @@
 "use client";
 
-import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
-import {
-  PostAndAuthorAll,
-  PostAndAuthorAllWithLikesAndRetweets,
-} from "@/types/db";
-import { FeedStatusType } from "@/types/feed";
-import {
-  useInfiniteQuery,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
 import { useIntersection } from "@mantine/hooks";
-import { useEffect, useState } from "react";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import PostDisplayClient from "./postDisplay/PostDisplayClient";
-import { Like } from "@prisma/client";
+import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
+import { PostAndAuthorAllWithLikesAndRetweets } from "@/types/db";
+import { useEffect } from "react";
 
-const PostFeedClient = ({
-  userId,
-  feedType = "all",
-}: {
-  userId: string;
-  feedType?: FeedStatusType;
-}) => {
+const PostCommentsFeed = ({ replyToId }: { replyToId: string }) => {
   const { ref, entry } = useIntersection({
     root: null,
     threshold: 1,
@@ -31,9 +16,9 @@ const PostFeedClient = ({
   const queryClient = useQueryClient();
 
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["get-posts-infinite", userId, feedType],
+    queryKey: ["get-replies-infinite", replyToId],
     queryFn: async ({ pageParam }) => {
-      const query = `/api/post?limit=${INFINITE_SCROLLING_PAGINATION_RESULTS}&page=${pageParam}&feedType=${feedType}`;
+      const query = `/api/post/${replyToId}/replies?limit=${INFINITE_SCROLLING_PAGINATION_RESULTS}&page=${pageParam}`;
       const data = await fetch(query);
       const posts =
         (await data.json()) as Array<PostAndAuthorAllWithLikesAndRetweets>;
@@ -77,4 +62,4 @@ const PostFeedClient = ({
   );
 };
 
-export default PostFeedClient;
+export default PostCommentsFeed;

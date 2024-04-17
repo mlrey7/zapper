@@ -79,7 +79,6 @@ const PostDisplayServer = async ({
         post={post}
         className={className}
         connected={connected}
-        userId={session.user.id}
       />
     </HydrationBoundary>
   );
