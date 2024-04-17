@@ -24,6 +24,11 @@ export type PostAndAuthorAll = PostAndAuthor & {
   quoteTo: PostAndAuthor | null;
 };
 
+export type PostAndAuthorAllWithLikesAndRetweets = PostAndAuthorAll & {
+  currentLike: boolean;
+  currentRetweet: boolean;
+};
+
 export type PostAndAuthorAllWithReply = PostAndAuthorAll & {
   replyTo: PostAndAuthorAll | null;
 };

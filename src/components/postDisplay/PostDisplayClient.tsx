@@ -4,7 +4,7 @@ import { PostAndAuthorAll } from "@/types/db";
 import React from "react";
 import UserAvatar from "../UserAvatar";
 import { cn, formatTimeToNow } from "@/lib/utils";
-import { PostContentType, PostContentValidator } from "@/lib/validators/post";
+import { PostContentValidator } from "@/lib/validators/post";
 import PostImageDisplay from "../PostImageDisplay";
 import PostInteraction from "../PostInteraction";
 import PostDisplayMoreOptions from "./PostDisplayMoreOptions";
@@ -14,24 +14,21 @@ import { Repeat } from "lucide-react";
 
 interface PostDisplayClientProps {
   post: PostAndAuthorAll;
-  currentLike: boolean;
-  currentRetweet: boolean;
-  postContent: PostContentType;
   className?: string;
   connected?: boolean;
+  userId: string;
 }
 
 const PostDisplayClient = ({
   post,
-  currentLike,
-  currentRetweet,
-  postContent,
   className,
   connected,
 }: PostDisplayClientProps) => {
   const router = useRouter();
 
   const quotedPost = post.quoteTo;
+
+  const postContent = PostContentValidator.parse(post?.content);
 
   const isRetweetPost =
     !!quotedPost && postContent.text === "" && postContent.images.length === 0;
@@ -121,14 +118,7 @@ const PostDisplayClient = ({
             <EmbeddedPost className="mt-4" embeddedPost={quotedPost} />
           )}
           <div className="mt-3">
-            <PostInteraction
-              initialRepliesAmount={activePost.postMetrics?.repliesCount ?? 0}
-              initialLikesAmount={activePost.postMetrics?.likesCount ?? 0}
-              initialRetweetsAmount={activePost.postMetrics?.retweetsCount ?? 0}
-              postId={activePost.id}
-              initialLike={currentLike}
-              initialRetweet={currentRetweet}
-            />
+            <PostInteraction postId={activePost.id} />
           </div>
         </div>
       </div>

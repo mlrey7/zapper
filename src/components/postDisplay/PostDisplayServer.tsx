@@ -4,6 +4,11 @@ import { PostContentValidator } from "@/lib/validators/post";
 import { PostAndAuthorAll } from "@/types/db";
 import React from "react";
 import PostDisplayClient from "./PostDisplayClient";
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from "@tanstack/react-query";
 
 interface PostDisplayServerProps {
   post: PostAndAuthorAll;
@@ -22,34 +27,61 @@ const PostDisplayServer = async ({
   if (!session) return null;
   if (!postContent.success) return null;
 
+  const quotedPost = post.quoteTo;
+
   const isRetweetPost =
-    post.quoteToId !== null &&
+    !!quotedPost &&
     postContent.data.text === "" &&
     postContent.data.images.length === 0;
 
-  const currentLike = await db.like.findFirst({
-    where: {
-      postId: isRetweetPost ? post.quoteToId! : post.id,
-      userId: session.user.id,
+  const activePost = isRetweetPost ? quotedPost : post;
+
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["currentLike", activePost.id],
+    queryFn: async () => {
+      const currentLike = await db.like.findFirst({
+        where: {
+          postId: activePost.id,
+          userId: session.user.id,
+        },
+      });
+
+      return !!currentLike;
     },
   });
 
-  const currentRetweet = await db.post.findFirst({
-    where: {
-      quoteToId: isRetweetPost ? post.quoteToId! : post.id,
-      authorId: session.user.id,
+  await queryClient.prefetchQuery({
+    queryKey: ["currentRetweet", activePost.id],
+    queryFn: async () => {
+      const currentRetweet = await db.post.findFirst({
+        where: {
+          quoteToId: activePost.id,
+          authorId: session.user.id,
+        },
+      });
+
+      return !!currentRetweet;
     },
   });
+
+  if (activePost.postMetrics) {
+    queryClient.setQueryData(
+      ["postMetrics", activePost.id],
+      activePost.postMetrics,
+    );
+  }
 
   return (
-    <PostDisplayClient
-      currentLike={!!currentLike}
-      currentRetweet={!!currentRetweet}
-      post={post}
-      postContent={postContent.data}
-      className={className}
-      connected={connected}
-    />
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <PostDisplayClient
+        post={post}
+        className={className}
+        connected={connected}
+        userId={session.user.id}
+      />
+    </HydrationBoundary>
   );
 };
 

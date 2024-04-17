@@ -4,8 +4,7 @@ import { Settings } from "lucide-react";
 import { Button, buttonVariants } from "./ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-
-type FeedStatusType = "following" | "all";
+import { FeedStatusType } from "@/types/feed";
 
 const FeedSwitch = () => {
   const [feedStatus, setFeedStatus] = useState<FeedStatusType>("all");

@@ -13,8 +13,6 @@ import { cn } from "@/lib/utils";
 
 interface PostDetailClientProps {
   post: PostAndAuthorAll;
-  currentLike: boolean;
-  currentRetweet: boolean;
   postContent: PostContentType;
   user: Pick<User, "name" | "username" | "image">;
   connected: boolean;
@@ -23,8 +21,6 @@ interface PostDetailClientProps {
 
 const PostDetailClient = ({
   post,
-  currentLike,
-  currentRetweet,
   postContent,
   user,
   connected,
@@ -73,14 +69,7 @@ const PostDetailClient = ({
           </div>
 
           <div className="-mt-3 border-b py-1">
-            <PostInteraction
-              initialRepliesAmount={post.postMetrics?.repliesCount ?? 0}
-              initialLikesAmount={post.postMetrics?.likesCount ?? 0}
-              initialRetweetsAmount={post.postMetrics?.retweetsCount ?? 0}
-              postId={post.id}
-              initialLike={currentLike}
-              initialRetweet={currentRetweet}
-            />
+            <PostInteraction postId={post.id} />
           </div>
           <CreateComment
             user={{

@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { startTransition, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { PostLikeRequest } from "@/lib/validators/like";
 import { cn, formatCompactNumber } from "@/lib/utils";
@@ -24,31 +24,46 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { PostMetrics } from "@prisma/client";
 
 interface PostInteractionProps {
   postId: string;
-  initialLikesAmount: number;
-  initialRepliesAmount: number;
-  initialRetweetsAmount: number;
-  initialLike: boolean;
-  initialRetweet: boolean;
 }
 
-const PostInteraction = ({
-  initialRepliesAmount,
-  initialLikesAmount,
-  initialRetweetsAmount,
-  postId,
-  initialLike,
-  initialRetweet,
-}: PostInteractionProps) => {
-  const [repliesAmount, setRepliesAmount] = useState(initialRepliesAmount);
-  const [likesAmount, setLikesAmount] = useState(initialLikesAmount);
-  const [retweetsAmount, setRetweetsAmount] = useState(initialRetweetsAmount);
-  const [currentLike, setCurrentLike] = useState(initialLike);
-  const [currentRetweet, setCurrentRetweet] = useState(initialRetweet);
-
+const PostInteraction = ({ postId }: PostInteractionProps) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const { data: currentLike } = useQuery({
+    queryKey: ["currentLike", postId],
+    queryFn: async () => {
+      const data = await fetch(`/api/post/${postId}/currentLike`);
+      const like = await data.json();
+      return !!like;
+    },
+  });
+
+  const { data: currentRetweet } = useQuery({
+    queryKey: ["currentRetweet", postId],
+    queryFn: async () => {
+      const data = await fetch(`/api/post/${postId}/currentRetweet`);
+      const retweet = await data.json();
+      return !!retweet;
+    },
+  });
+
+  const { data: postMetrics } = useQuery({
+    queryKey: ["postMetrics", postId],
+    queryFn: async () => {
+      const data = await fetch(`/api/post/${postId}/postMetrics`);
+      const postMetrics = await data.json();
+      return postMetrics as PostMetrics;
+    },
+  });
+
+  const likesAmount = postMetrics?.likesCount ?? 0;
+  const repliesAmount = postMetrics?.repliesCount ?? 0;
+  const retweetsAmount = postMetrics?.retweetsCount ?? 0;
 
   const { mutate: like } = useMutation({
     mutationFn: async () => {
@@ -58,13 +73,33 @@ const PostInteraction = ({
 
       await axios.patch("/api/post/like", payload);
     },
-    onMutate: () => {
-      setCurrentLike(true);
-      setLikesAmount((prev) => prev + 1);
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ["currentLike", postId] });
+      queryClient.setQueryData(["currentLike", postId], () => true);
+
+      const previousPostMetrics = queryClient.getQueryData([
+        "postMetrics",
+        postId,
+      ]);
+      queryClient.setQueryData(
+        ["postMetrics", postId],
+        (oldPostMetrics: PostMetrics) => {
+          return {
+            ...oldPostMetrics,
+            likesCount: oldPostMetrics.likesCount + 1,
+          };
+        },
+      );
+
+      return { previousPostMetrics };
     },
-    onError: () => {
-      setCurrentLike(false);
-      setLikesAmount((prev) => prev - 1);
+    onError: (err, _, context) => {
+      queryClient.setQueryData(["currentLike", postId], false);
+
+      queryClient.setQueryData(
+        ["postMetrics", postId],
+        context?.previousPostMetrics,
+      );
 
       return toast({
         title: "Something went wrong",
@@ -72,10 +107,12 @@ const PostInteraction = ({
         variant: "destructive",
       });
     },
-    onSuccess: () => {
-      startTransition(() => {
-        router.refresh();
-      });
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentLike", postId] });
+      queryClient.invalidateQueries({ queryKey: ["postMetrics", postId] });
+      // startTransition(() => {
+      //   router.refresh();
+      // });
     },
   });
 
@@ -87,13 +124,33 @@ const PostInteraction = ({
 
       await axios.patch("/api/post/unlike", payload);
     },
-    onMutate: () => {
-      setCurrentLike(false);
-      setLikesAmount((prev) => prev - 1);
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ["currentLike", postId] });
+      queryClient.setQueryData(["currentLike", postId], () => false);
+
+      const previousPostMetrics = queryClient.getQueryData([
+        "postMetrics",
+        postId,
+      ]);
+      queryClient.setQueryData(
+        ["postMetrics", postId],
+        (oldPostMetrics: PostMetrics) => {
+          return {
+            ...oldPostMetrics,
+            likesCount: oldPostMetrics.likesCount - 1,
+          };
+        },
+      );
+
+      return { previousPostMetrics };
     },
-    onError: () => {
-      setCurrentLike(true);
-      setLikesAmount((prev) => prev + 1);
+    onError: (err, _, context) => {
+      queryClient.setQueryData(["currentLike", postId], true);
+
+      queryClient.setQueryData(
+        ["postMetrics", postId],
+        context?.previousPostMetrics,
+      );
 
       return toast({
         title: "Something went wrong",
@@ -101,10 +158,12 @@ const PostInteraction = ({
         variant: "destructive",
       });
     },
-    onSuccess: () => {
-      startTransition(() => {
-        router.refresh();
-      });
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentLike", postId] });
+      queryClient.invalidateQueries({ queryKey: ["postMetrics", postId] });
+      // startTransition(() => {
+      //   router.refresh();
+      // });
     },
   });
 
@@ -123,21 +182,47 @@ const PostInteraction = ({
       const { data } = await axios.post("/api/post/create", payload);
       return data;
     },
-    onMutate: () => {
-      setCurrentRetweet(true);
-      setRetweetsAmount((prev) => prev + 1);
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ["currentRetweet", postId] });
+      queryClient.setQueryData(["currentRetweet", postId], () => true);
+
+      const previousPostMetrics = queryClient.getQueryData([
+        "postMetrics",
+        postId,
+      ]);
+      queryClient.setQueryData(
+        ["postMetrics", postId],
+        (oldPostMetrics: PostMetrics) => {
+          return {
+            ...oldPostMetrics,
+            retweetsCount: oldPostMetrics.retweetsCount + 1,
+          };
+        },
+      );
+
+      return { previousPostMetrics };
     },
-    onError: () => {
+    onError: (err, _, context) => {
+      queryClient.setQueryData(["currentRetweet", postId], () => false);
+
+      queryClient.setQueryData(
+        ["postMetrics", postId],
+        context?.previousPostMetrics,
+      );
+
       return toast({
         title: "Something went wrong",
         description: "Your post was not published, please try again later.",
         variant: "destructive",
       });
     },
-    onSuccess: () => {
-      startTransition(() => {
-        router.refresh();
-      });
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentRetweet", postId] });
+      queryClient.invalidateQueries({ queryKey: ["postMetrics", postId] });
+
+      // startTransition(() => {
+      //   router.refresh();
+      // });
 
       return toast({
         title: "Success",
