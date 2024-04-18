@@ -1,20 +1,12 @@
 "use client";
 
 import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
-import {
-  PostAndAuthorAll,
-  PostAndAuthorAllWithLikesAndRetweets,
-} from "@/types/db";
 import { FeedStatusType } from "@/types/feed";
-import {
-  useInfiniteQuery,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useIntersection } from "@mantine/hooks";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import PostDisplayClient from "./postDisplay/PostDisplayClient";
-import { Like } from "@prisma/client";
+import { PrismaPostAllArrayValidator } from "@/lib/validators/post";
 
 const PostFeedClient = ({
   userId,
@@ -35,8 +27,7 @@ const PostFeedClient = ({
     queryFn: async ({ pageParam }) => {
       const query = `/api/post?limit=${INFINITE_SCROLLING_PAGINATION_RESULTS}&page=${pageParam}&feedType=${feedType}`;
       const data = await fetch(query);
-      const posts =
-        (await data.json()) as Array<PostAndAuthorAllWithLikesAndRetweets>;
+      const posts = PrismaPostAllArrayValidator.parse(await data.json());
       posts.forEach((post) => {
         queryClient.setQueryData(["currentLike", post.id], post.currentLike);
 

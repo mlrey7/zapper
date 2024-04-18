@@ -1,3 +1,4 @@
+import { PostMetrics } from "@prisma/client";
 import z from "zod";
 
 export const PostContentValidator = z.object({
@@ -14,3 +15,45 @@ export const PostValidator = z.object({
 });
 
 export type PostCreationRequest = z.infer<typeof PostValidator>;
+
+export const PrismaPostMetricsValidator = z.object({
+  id: z.string(),
+  postId: z.string(),
+  likesCount: z.number(),
+  repliesCount: z.number(),
+  retweetsCount: z.number(),
+});
+
+export const PrismaPostValidator = z.object({
+  id: z.string(),
+  content: PostContentValidator,
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  authorId: z.string(),
+  replyToId: z.string().nullable(),
+  quoteToId: z.string().nullable(),
+  author: z.object({
+    name: z.string(),
+    username: z.string().nullable(),
+    image: z.string().nullable(),
+  }),
+});
+
+export type PrismaPostType = z.infer<typeof PrismaPostValidator>;
+
+type PrismaPostAllType = PrismaPostType & {
+  postMetrics: PostMetrics;
+  quoteTo: PrismaPostType;
+  currentLike: boolean;
+  currentRetweet: boolean;
+};
+
+export const PrismaPostAllValidator: z.ZodType<PrismaPostAllType> =
+  PrismaPostValidator.extend({
+    postMetrics: PrismaPostMetricsValidator,
+    quoteTo: PrismaPostValidator,
+    currentLike: z.boolean(),
+    currentRetweet: z.boolean(),
+  });
+
+export const PrismaPostAllArrayValidator = z.array(PrismaPostAllValidator);

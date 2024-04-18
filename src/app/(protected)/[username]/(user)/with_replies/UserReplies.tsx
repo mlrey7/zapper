@@ -2,7 +2,7 @@
 
 import PostDisplayClient from "@/components/postDisplay/PostDisplayClient";
 import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
-import { PostAndAuthorAllWithLikesAndRetweets } from "@/types/db";
+import { PrismaPostAllArrayValidator } from "@/lib/validators/post";
 import { useIntersection } from "@mantine/hooks";
 import { useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
@@ -20,8 +20,7 @@ const UserReplies = ({ userId }: { userId: string }) => {
     queryFn: async ({ pageParam }) => {
       const query = `/api/user/${userId}/replies?limit=${INFINITE_SCROLLING_PAGINATION_RESULTS}&page=${pageParam}`;
       const data = await fetch(query);
-      const posts =
-        (await data.json()) as Array<PostAndAuthorAllWithLikesAndRetweets>;
+      const posts = PrismaPostAllArrayValidator.parse(await data.json());
       posts.forEach((post) => {
         queryClient.setQueryData(["currentLike", post.id], post.currentLike);
 

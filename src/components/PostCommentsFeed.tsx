@@ -4,8 +4,8 @@ import { useIntersection } from "@mantine/hooks";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import PostDisplayClient from "./postDisplay/PostDisplayClient";
 import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
-import { PostAndAuthorAllWithLikesAndRetweets } from "@/types/db";
 import { useEffect } from "react";
+import { PrismaPostAllArrayValidator } from "@/lib/validators/post";
 
 const PostCommentsFeed = ({ replyToId }: { replyToId: string }) => {
   const { ref, entry } = useIntersection({
@@ -20,8 +20,7 @@ const PostCommentsFeed = ({ replyToId }: { replyToId: string }) => {
     queryFn: async ({ pageParam }) => {
       const query = `/api/post/${replyToId}/replies?limit=${INFINITE_SCROLLING_PAGINATION_RESULTS}&page=${pageParam}`;
       const data = await fetch(query);
-      const posts =
-        (await data.json()) as Array<PostAndAuthorAllWithLikesAndRetweets>;
+      const posts = PrismaPostAllArrayValidator.parse(await data.json());
       posts.forEach((post) => {
         queryClient.setQueryData(["currentLike", post.id], post.currentLike);
 

@@ -17,7 +17,10 @@ import { PostLikeRequest } from "@/lib/validators/like";
 import { cn, formatCompactNumber } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import { PostCreationRequest } from "@/lib/validators/post";
+import {
+  PostCreationRequest,
+  PrismaPostMetricsValidator,
+} from "@/lib/validators/post";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -66,7 +69,7 @@ const PostInteraction = ({ postId }: PostInteractionProps) => {
     queryFn: async () => {
       const data = await fetch(`/api/post/${postId}/postMetrics`);
       const postMetrics = await data.json();
-      return postMetrics as PostMetrics;
+      return PrismaPostMetricsValidator.parse(postMetrics);
     },
   });
 
