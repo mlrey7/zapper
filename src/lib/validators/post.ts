@@ -27,8 +27,8 @@ export const PrismaPostMetricsValidator = z.object({
 export const PrismaPostValidator = z.object({
   id: z.string(),
   content: PostContentValidator,
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
   authorId: z.string(),
   replyToId: z.string().nullable(),
   quoteToId: z.string().nullable(),
