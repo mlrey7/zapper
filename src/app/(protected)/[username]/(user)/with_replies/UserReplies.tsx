@@ -2,12 +2,19 @@
 
 import PostDisplayClient from "@/components/postDisplay/PostDisplayClient";
 import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
+import { postQueryKeys } from "@/lib/postQuery";
 import { PrismaPostAllArrayValidator } from "@/lib/validators/post";
 import { useIntersection } from "@mantine/hooks";
 import { useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 
-const UserReplies = ({ userId }: { userId: string }) => {
+const UserReplies = ({
+  authUserId,
+  userId,
+}: {
+  authUserId: string;
+  userId: string;
+}) => {
   const { ref, entry } = useIntersection({
     root: null,
     threshold: 1,
@@ -16,7 +23,7 @@ const UserReplies = ({ userId }: { userId: string }) => {
   const queryClient = useQueryClient();
 
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["get-user-replies-infinite", userId],
+    queryKey: postQueryKeys.userReplies(authUserId, userId),
     queryFn: async ({ pageParam }) => {
       const query = `/api/user/${userId}/replies?limit=${INFINITE_SCROLLING_PAGINATION_RESULTS}&page=${pageParam}`;
       const data = await fetch(query);

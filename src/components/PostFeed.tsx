@@ -8,6 +8,7 @@ import {
   dehydrate,
 } from "@tanstack/react-query";
 import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
+import { postQueryKeys } from "@/lib/postQuery";
 
 const PostFeed = async () => {
   const session = await getAuthSession();
@@ -17,12 +18,12 @@ const PostFeed = async () => {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchInfiniteQuery({
-    queryKey: ["get-posts-infinite", session.user.id, "all"],
+    queryKey: postQueryKeys.userFeed(session.user.id, { feedType: "all" }),
     queryFn: async ({ pageParam }) => {
       const postsWithLikesAndRetweets = await getInfinitePosts({
         limit: INFINITE_SCROLLING_PAGINATION_RESULTS,
         pageParam,
-        userId: session.user.id,
+        authUserId: session.user.id,
         where: { replyToId: null },
       });
 
@@ -44,7 +45,7 @@ const PostFeed = async () => {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <PostFeedClient userId={session.user.id} />
+      <PostFeedClient authUserId={session.user.id} />
     </HydrationBoundary>
   );
 };

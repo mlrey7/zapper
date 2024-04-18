@@ -7,6 +7,8 @@ import {
 } from "@tanstack/react-query";
 import UserPosts from "./UserPosts";
 import { getInfinitePosts } from "@/controllers/postController";
+import { postQueryKeys } from "@/lib/postQuery";
+import { getAuthSession } from "@/lib/auth";
 
 const Page = async ({
   params: { username },
@@ -14,30 +16,35 @@ const Page = async ({
   params: { username: string };
 }) => {
   const user = await getUser(username);
+  const session = await getAuthSession();
 
+  if (!session) return null;
   if (!user) return null;
 
-  const queryClient = await prefetchUserPostsFeed(user.id);
+  const queryClient = await prefetchUserPostsFeed(session.user.id, user.id);
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <UserPosts userId={user.id} />
+      <UserPosts authUserId={session.user.id} userId={user.id} />
     </HydrationBoundary>
   );
 };
 
 export default Page;
 
-const prefetchUserPostsFeed = async (userId: string): Promise<QueryClient> => {
+const prefetchUserPostsFeed = async (
+  authUserId: string,
+  userId: string,
+): Promise<QueryClient> => {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchInfiniteQuery({
-    queryKey: ["get-user-posts-infinite", userId],
+    queryKey: postQueryKeys.userPosts(authUserId, userId),
     queryFn: async ({ pageParam }) => {
       const postsWithLikesAndRetweets = await getInfinitePosts({
         limit: INFINITE_SCROLLING_PAGINATION_RESULTS,
         pageParam,
-        userId,
+        authUserId,
         where: { authorId: userId, replyToId: null },
       });
 

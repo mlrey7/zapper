@@ -8,6 +8,8 @@ import {
 } from "@tanstack/react-query";
 import React from "react";
 import UserLikes from "./UserLikes";
+import { postQueryKeys } from "@/lib/postQuery";
+import { getAuthSession } from "@/lib/auth";
 
 const Page = async ({
   params: { username },
@@ -15,29 +17,35 @@ const Page = async ({
   params: { username: string };
 }) => {
   const user = await getUser(username);
+  const session = await getAuthSession();
+
+  if (!session) return null;
   if (!user) return null;
 
-  const queryClient = await prefetchUserLikes(user.id);
+  const queryClient = await prefetchUserLikes(session.user.id, user.id);
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <UserLikes userId={user.id} />
+      <UserLikes authUserId={session.user.id} userId={user.id} />
     </HydrationBoundary>
   );
 };
 
 export default Page;
 
-const prefetchUserLikes = async (userId: string): Promise<QueryClient> => {
+const prefetchUserLikes = async (
+  authUserId: string,
+  userId: string,
+): Promise<QueryClient> => {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchInfiniteQuery({
-    queryKey: ["get-user-likes-infinite", userId],
+    queryKey: postQueryKeys.userLikes(authUserId, userId),
     queryFn: async ({ pageParam }) => {
       const postsWithLikesAndRetweets = await getInfiniteLikedPosts({
         limit: INFINITE_SCROLLING_PAGINATION_RESULTS,
         pageParam,
-        userId,
+        authUserId,
         where: {
           userId,
         },

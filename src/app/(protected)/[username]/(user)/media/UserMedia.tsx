@@ -1,21 +1,20 @@
 "use client";
 
 import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
-import {
-  PostContentType,
-  PrismaPostAllArrayValidator,
-} from "@/lib/validators/post";
-import { PostAndAuthorAllWithLikesAndRetweets } from "@/types/db";
+import { PrismaPostAllArrayValidator } from "@/lib/validators/post";
 import { useIntersection } from "@mantine/hooks";
 import { useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
 import React, { useEffect } from "react";
+import { postQueryKeys } from "@/lib/postQuery";
 
 const UserMedia = ({
+  authUserId,
   userId,
   username,
 }: {
+  authUserId: string;
   userId: string;
   username: string;
 }) => {
@@ -27,7 +26,7 @@ const UserMedia = ({
   const queryClient = useQueryClient();
 
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["get-user-media-infinite", userId],
+    queryKey: postQueryKeys.userMedia(authUserId, userId),
     queryFn: async ({ pageParam }) => {
       const query = `/api/user/${userId}/media?limit=${INFINITE_SCROLLING_PAGINATION_RESULTS}&page=${pageParam}`;
       const data = await fetch(query);

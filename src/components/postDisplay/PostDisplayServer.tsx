@@ -27,6 +27,28 @@ const PostDisplayServer = async ({
   if (!session) return null;
   if (!postContent.success) return null;
 
+  const getCurrentLike = async (postId: string) => {
+    const currentLike = await db.like.findFirst({
+      where: {
+        postId,
+        userId: session.user.id,
+      },
+    });
+
+    return !!currentLike;
+  };
+
+  const getCurrentRetweet = async (postId: string) => {
+    const currentRetweet = await db.post.findFirst({
+      where: {
+        quoteToId: postId,
+        authorId: session.user.id,
+      },
+    });
+
+    return !!currentRetweet;
+  };
+
   const quotedPost = post.quoteTo;
 
   const isRetweetPost =
@@ -40,30 +62,12 @@ const PostDisplayServer = async ({
 
   await queryClient.prefetchQuery({
     queryKey: ["currentLike", activePost.id],
-    queryFn: async () => {
-      const currentLike = await db.like.findFirst({
-        where: {
-          postId: activePost.id,
-          userId: session.user.id,
-        },
-      });
-
-      return !!currentLike;
-    },
+    queryFn: async () => getCurrentLike(activePost.id),
   });
 
   await queryClient.prefetchQuery({
     queryKey: ["currentRetweet", activePost.id],
-    queryFn: async () => {
-      const currentRetweet = await db.post.findFirst({
-        where: {
-          quoteToId: activePost.id,
-          authorId: session.user.id,
-        },
-      });
-
-      return !!currentRetweet;
-    },
+    queryFn: async () => getCurrentRetweet(activePost.id),
   });
 
   if (activePost.postMetrics) {

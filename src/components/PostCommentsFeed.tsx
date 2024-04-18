@@ -6,8 +6,15 @@ import PostDisplayClient from "./postDisplay/PostDisplayClient";
 import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
 import { useEffect } from "react";
 import { PrismaPostAllArrayValidator } from "@/lib/validators/post";
+import { postQueryKeys } from "@/lib/postQuery";
 
-const PostCommentsFeed = ({ replyToId }: { replyToId: string }) => {
+const PostCommentsFeed = ({
+  authUserId,
+  replyToId,
+}: {
+  authUserId: string;
+  replyToId: string;
+}) => {
   const { ref, entry } = useIntersection({
     root: null,
     threshold: 1,
@@ -16,7 +23,7 @@ const PostCommentsFeed = ({ replyToId }: { replyToId: string }) => {
   const queryClient = useQueryClient();
 
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["get-replies-infinite", replyToId],
+    queryKey: postQueryKeys.postComments(authUserId, replyToId),
     queryFn: async ({ pageParam }) => {
       const query = `/api/post/${replyToId}/replies?limit=${INFINITE_SCROLLING_PAGINATION_RESULTS}&page=${pageParam}`;
       const data = await fetch(query);

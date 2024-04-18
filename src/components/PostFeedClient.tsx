@@ -7,12 +7,13 @@ import { useIntersection } from "@mantine/hooks";
 import { useEffect } from "react";
 import PostDisplayClient from "./postDisplay/PostDisplayClient";
 import { PrismaPostAllArrayValidator } from "@/lib/validators/post";
+import { postQueryKeys } from "@/lib/postQuery";
 
 const PostFeedClient = ({
-  userId,
+  authUserId,
   feedType = "all",
 }: {
-  userId: string;
+  authUserId: string;
   feedType?: FeedStatusType;
 }) => {
   const { ref, entry } = useIntersection({
@@ -23,7 +24,7 @@ const PostFeedClient = ({
   const queryClient = useQueryClient();
 
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["get-posts-infinite", userId, feedType],
+    queryKey: postQueryKeys.userFeed(authUserId, { feedType }),
     queryFn: async ({ pageParam }) => {
       const query = `/api/post?limit=${INFINITE_SCROLLING_PAGINATION_RESULTS}&page=${pageParam}&feedType=${feedType}`;
       const data = await fetch(query);

@@ -315,11 +315,11 @@ export const getInfinitePosts = async ({
   pageParam,
   where,
   limit,
-  userId,
+  authUserId,
 }: {
   pageParam: number;
   limit: number;
-  userId: string;
+  authUserId: string;
   where: Prisma.PostWhereInput;
 }) => {
   const posts = await db.post.findMany({
@@ -359,7 +359,7 @@ export const getInfinitePosts = async ({
       postId: {
         in: postIds,
       },
-      userId: userId,
+      userId: authUserId,
     },
   });
 
@@ -374,7 +374,7 @@ export const getInfinitePosts = async ({
       quoteToId: {
         in: postIds,
       },
-      authorId: userId,
+      authorId: authUserId,
     },
   });
 
@@ -398,12 +398,12 @@ export const getInfinitePosts = async ({
 export const getInfiniteLikedPosts = async ({
   pageParam,
   limit,
-  userId,
+  authUserId,
   where,
 }: {
   pageParam: number;
   limit: number;
-  userId: string;
+  authUserId: string;
   where: Prisma.LikeWhereInput;
 }) => {
   const likes = await db.like.findMany({
@@ -461,7 +461,7 @@ export const getInfiniteLikedPosts = async ({
       postId: {
         in: postIds,
       },
-      userId: userId,
+      userId: authUserId,
     },
   });
 
@@ -476,7 +476,7 @@ export const getInfiniteLikedPosts = async ({
       quoteToId: {
         in: postIds,
       },
-      authorId: userId,
+      authorId: authUserId,
     },
   });
 

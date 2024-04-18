@@ -8,6 +8,7 @@ import {
 import PostCommentsFeed from "./PostCommentsFeed";
 import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
 import { getInfinitePosts } from "@/controllers/postController";
+import { postQueryKeys } from "@/lib/postQuery";
 
 const PostComments = async ({ replyToId }: { replyToId: string }) => {
   const session = await getAuthSession();
@@ -17,24 +18,24 @@ const PostComments = async ({ replyToId }: { replyToId: string }) => {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <PostCommentsFeed replyToId={replyToId} />
+      <PostCommentsFeed replyToId={replyToId} authUserId={session.user.id} />
     </HydrationBoundary>
   );
 };
 
 const prefetchCommentsFeed = async (
   replyToId: string,
-  userId: string,
+  authUserId: string,
 ): Promise<QueryClient> => {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchInfiniteQuery({
-    queryKey: ["get-replies-infinite", replyToId],
+    queryKey: postQueryKeys.postComments(authUserId, replyToId),
     queryFn: async ({ pageParam }) => {
       const postsWithLikesAndRetweets = await getInfinitePosts({
         limit: INFINITE_SCROLLING_PAGINATION_RESULTS,
         pageParam,
-        userId,
+        authUserId,
         where: {
           replyToId,
         },
