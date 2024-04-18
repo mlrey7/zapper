@@ -28,7 +28,7 @@ export async function GET(
     const postsWithLikesAndRetweets = await getInfiniteLikedPosts({
       limit: parseInt(limit),
       pageParam: parseInt(page),
-      userId: session.user.id,
+      authUserId: session.user.id,
       where: {
         userId,
       },
