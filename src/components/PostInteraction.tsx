@@ -41,6 +41,15 @@ const PostInteraction = ({ postId }: PostInteractionProps) => {
       const like = await data.json();
       return !!like;
     },
+    // initialData: () => {
+    //   const userId = "sdfsd";
+
+    //   return !!(
+    //     queryClient.getQueryData(["get-posts-infinite", userId]).currentLike ||
+    //     queryClient.getQueryData(["get-user-posts-infinite", userId]).currentLike ||
+    //     queryClient.getQueryData(["get-replies-infinite", postId]).currentLike
+    //   );
+    // },
   });
 
   const { data: currentRetweet } = useQuery({

@@ -1,10 +1,10 @@
-import { getInfinitePosts } from "@/controllers/postController";
+import { getInfiniteLikedPosts } from "@/controllers/postController";
 import { getAuthSession } from "@/lib/auth";
 import { z } from "zod";
 
 export async function GET(
   request: Request,
-  { params: { id: replyToId } }: { params: { id: string } },
+  { params: { id: userId } }: { params: { id: string } },
 ) {
   const url = new URL(request.url);
 
@@ -25,12 +25,12 @@ export async function GET(
         limit: url.searchParams.get("limit"),
       });
 
-    const postsWithLikesAndRetweets = await getInfinitePosts({
+    const postsWithLikesAndRetweets = await getInfiniteLikedPosts({
       limit: parseInt(limit),
       pageParam: parseInt(page),
       userId: session.user.id,
       where: {
-        replyToId,
+        userId,
       },
     });
 

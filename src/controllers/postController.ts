@@ -9,6 +9,7 @@ import { cache } from "react";
 import { redis } from "@/lib/redis";
 import { omit } from "@/lib/utils";
 import { unstable_cache } from "next/cache";
+import { Prisma } from "@prisma/client";
 
 export const getPostsFeed = cache(() => {
   console.log("UNCACHED: getPostsFeed");
@@ -308,4 +309,190 @@ export const getFeed = () => {
       id: { in: ["asfs", "asdfsdf"] },
     },
   });
+};
+
+export const getInfinitePosts = async ({
+  pageParam,
+  where,
+  limit,
+  userId,
+}: {
+  pageParam: number;
+  limit: number;
+  userId: string;
+  where: Prisma.PostWhereInput;
+}) => {
+  const posts = await db.post.findMany({
+    where,
+    skip: (pageParam - 1) * limit,
+    take: limit,
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      author: {
+        select: {
+          image: true,
+          name: true,
+          username: true,
+        },
+      },
+      postMetrics: true,
+      quoteTo: {
+        include: {
+          author: {
+            select: {
+              image: true,
+              name: true,
+              username: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const postIds = posts.map((post) => post.id);
+
+  const currentLikes = await db.like.findMany({
+    where: {
+      postId: {
+        in: postIds,
+      },
+      userId: userId,
+    },
+  });
+
+  const currentLikesMap = new Map(
+    currentLikes.map((curr) => {
+      return [curr.postId, curr];
+    }),
+  );
+
+  const currentRetweets = await db.post.findMany({
+    where: {
+      quoteToId: {
+        in: postIds,
+      },
+      authorId: userId,
+    },
+  });
+
+  const currentRetweetsMap = new Map(
+    currentRetweets.map((curr) => {
+      return [curr.quoteToId, curr];
+    }),
+  );
+
+  const postsWithLikesAndRetweets = posts.map((post) => {
+    return {
+      ...post,
+      currentLike: !!currentLikesMap.get(post.id),
+      currentRetweet: !!currentRetweetsMap.get(post.id),
+    };
+  });
+
+  return postsWithLikesAndRetweets;
+};
+
+export const getInfiniteLikedPosts = async ({
+  pageParam,
+  limit,
+  userId,
+  where,
+}: {
+  pageParam: number;
+  limit: number;
+  userId: string;
+  where: Prisma.LikeWhereInput;
+}) => {
+  const likes = await db.like.findMany({
+    where,
+    skip: (pageParam - 1) * limit,
+    take: limit,
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      post: {
+        include: {
+          author: {
+            select: {
+              image: true,
+              name: true,
+              username: true,
+            },
+          },
+          postMetrics: true,
+          quoteTo: {
+            include: {
+              author: {
+                select: {
+                  image: true,
+                  name: true,
+                  username: true,
+                },
+              },
+              postMetrics: true,
+            },
+          },
+          replyTo: {
+            include: {
+              author: {
+                select: {
+                  image: true,
+                  name: true,
+                  username: true,
+                },
+              },
+              postMetrics: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const posts = likes.map((like) => like.post);
+  const postIds = posts.map((post) => post.id);
+
+  const currentLikes = await db.like.findMany({
+    where: {
+      postId: {
+        in: postIds,
+      },
+      userId: userId,
+    },
+  });
+
+  const currentLikesMap = new Map(
+    currentLikes.map((curr) => {
+      return [curr.postId, curr];
+    }),
+  );
+
+  const currentRetweets = await db.post.findMany({
+    where: {
+      quoteToId: {
+        in: postIds,
+      },
+      authorId: userId,
+    },
+  });
+
+  const currentRetweetsMap = new Map(
+    currentRetweets.map((curr) => {
+      return [curr.quoteToId, curr];
+    }),
+  );
+
+  const postsWithLikesAndRetweets = posts.map((post) => {
+    return {
+      ...post,
+      currentLike: !!currentLikesMap.get(post.id),
+      currentRetweet: !!currentRetweetsMap.get(post.id),
+    };
+  });
+
+  return postsWithLikesAndRetweets;
 };

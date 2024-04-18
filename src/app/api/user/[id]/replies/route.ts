@@ -4,7 +4,7 @@ import { z } from "zod";
 
 export async function GET(
   request: Request,
-  { params: { id: replyToId } }: { params: { id: string } },
+  { params: { id: userId } }: { params: { id: string } },
 ) {
   const url = new URL(request.url);
 
@@ -30,7 +30,7 @@ export async function GET(
       pageParam: parseInt(page),
       userId: session.user.id,
       where: {
-        replyToId,
+        authorId: userId,
       },
     });
 
