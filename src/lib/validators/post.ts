@@ -27,8 +27,8 @@ export const PrismaPostMetricsValidator = z.object({
 export const PrismaPostValidator = z.object({
   id: z.string(),
   content: PostContentValidator,
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
   authorId: z.string(),
   replyToId: z.string().nullable(),
   quoteToId: z.string().nullable(),
@@ -43,7 +43,7 @@ export type PrismaPostType = z.infer<typeof PrismaPostValidator>;
 
 type PrismaPostAllType = PrismaPostType & {
   postMetrics: PostMetrics;
-  quoteTo: PrismaPostType;
+  quoteTo: PrismaPostType | null;
   currentLike: boolean;
   currentRetweet: boolean;
 };
@@ -51,7 +51,7 @@ type PrismaPostAllType = PrismaPostType & {
 export const PrismaPostAllValidator: z.ZodType<PrismaPostAllType> =
   PrismaPostValidator.extend({
     postMetrics: PrismaPostMetricsValidator,
-    quoteTo: PrismaPostValidator,
+    quoteTo: PrismaPostValidator.nullable(),
     currentLike: z.boolean(),
     currentRetweet: z.boolean(),
   });
