@@ -1,13 +1,11 @@
 "use client";
 
-import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
-import { PrismaPostAllArrayValidator } from "@/lib/validators/post";
-import { useIntersection } from "@mantine/hooks";
-import { useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
-import React, { useEffect } from "react";
+import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
+import { useInfiniteFeed } from "@/hooks/use-infinite-feed";
 import { postQueryKeys } from "@/lib/postQuery";
+import { PrismaPostAllArrayValidator } from "@/lib/validators/post";
 
 const UserMedia = ({
   authUserId,
@@ -18,47 +16,14 @@ const UserMedia = ({
   userId: string;
   username: string;
 }) => {
-  const { ref, entry } = useIntersection({
-    root: null,
-    threshold: 1,
-  });
-
-  const queryClient = useQueryClient();
-
-  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
+  const { ref, posts } = useInfiniteFeed({
     queryKey: postQueryKeys.userMedia(authUserId, userId),
-    queryFn: async ({ pageParam }) => {
+    mainQueryFn: async (pageParam) => {
       const query = `/api/user/${userId}/media?limit=${INFINITE_SCROLLING_PAGINATION_RESULTS}&page=${pageParam}`;
       const data = await fetch(query);
-      const posts = PrismaPostAllArrayValidator.parse(await data.json());
-      posts.forEach((post) => {
-        queryClient.setQueryData(["currentLike", post.id], post.currentLike);
-
-        queryClient.setQueryData(
-          ["currentRetweet", post.id],
-          post.currentRetweet,
-        );
-
-        queryClient.setQueryData(["postMetrics", post.id], post.postMetrics);
-      });
-      return posts;
-    },
-    initialPageParam: 2,
-    getNextPageParam: (lastPage, _, lastPageParam) => {
-      if (lastPage.length === 0) {
-        return undefined;
-      }
-      return lastPageParam + 1;
+      return PrismaPostAllArrayValidator.parse(await data.json());
     },
   });
-
-  useEffect(() => {
-    if (entry?.isIntersecting && hasNextPage) {
-      fetchNextPage();
-    }
-  }, [entry, fetchNextPage, hasNextPage]);
-
-  const posts = data?.pages.flat() ?? [];
 
   const flattenedPosts = posts.flatMap((post) => {
     return post.content.images.map((image, index) => {

@@ -41,7 +41,7 @@ export const PrismaPostValidator = z.object({
 
 export type PrismaPostType = z.infer<typeof PrismaPostValidator>;
 
-type PrismaPostAllType = PrismaPostType & {
+export type PrismaPostAllType = PrismaPostType & {
   postMetrics: PostMetrics;
   quoteTo: PrismaPostType | null;
   currentLike: boolean;
