@@ -6,6 +6,8 @@ import PostDisplayClient from "./postDisplay/PostDisplayClient";
 import { PrismaPostAllArrayValidator } from "@/lib/validators/post";
 import { postQueryKeys } from "@/lib/postQuery";
 import { useInfiniteFeed } from "@/hooks/use-infinite-feed";
+import { Loader2 } from "lucide-react";
+import FeedLoading from "./FeedLoading";
 
 const PostFeedClient = ({
   authUserId,
@@ -14,7 +16,7 @@ const PostFeedClient = ({
   authUserId: string;
   feedType?: FeedStatusType;
 }) => {
-  const { ref, posts } = useInfiniteFeed({
+  const { ref, posts, isFetchingNextPage } = useInfiniteFeed({
     queryKey: postQueryKeys.userFeed(authUserId, { feedType }),
     mainQueryFn: async (pageParam) => {
       const query = `/api/post?limit=${INFINITE_SCROLLING_PAGINATION_RESULTS}&page=${pageParam}&feedType=${feedType}`;
@@ -32,6 +34,7 @@ const PostFeedClient = ({
           </li>
         );
       })}
+      {isFetchingNextPage && <FeedLoading />}
     </ul>
   );
 };

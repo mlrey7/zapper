@@ -1,12 +1,12 @@
 import { Loader2 } from "lucide-react";
 import React from "react";
 
-const Loading = () => {
+const FeedLoading = () => {
   return (
-    <div className="mx-auto mt-12 px-4">
+    <li className="mx-auto py-4">
       <Loader2 className="h-6 w-6 animate-spin" />
-    </div>
+    </li>
   );
 };
 
-export default Loading;
+export default FeedLoading;

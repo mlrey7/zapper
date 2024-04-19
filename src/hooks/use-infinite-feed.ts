@@ -23,40 +23,41 @@ export const useInfiniteFeed = ({
 
   const queryClient = useQueryClient();
 
-  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey,
-    queryFn: async ({ pageParam }) => {
-      const posts = await mainQueryFn(pageParam);
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey,
+      queryFn: async ({ pageParam }) => {
+        const posts = await mainQueryFn(pageParam);
 
-      posts.forEach((post) => {
-        queryClient.setQueryData(["currentLike", post.id], post.currentLike);
+        posts.forEach((post) => {
+          queryClient.setQueryData(["currentLike", post.id], post.currentLike);
 
-        queryClient.setQueryData(
-          ["currentRetweet", post.id],
-          post.currentRetweet,
-        );
+          queryClient.setQueryData(
+            ["currentRetweet", post.id],
+            post.currentRetweet,
+          );
 
-        queryClient.setQueryData(["postMetrics", post.id], post.postMetrics);
-      });
+          queryClient.setQueryData(["postMetrics", post.id], post.postMetrics);
+        });
 
-      return posts;
-    },
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, _, lastPageParam) => {
-      if (lastPage.length === 0) {
-        return undefined;
-      }
-      return lastPageParam + 1;
-    },
-  });
+        return posts;
+      },
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, _, lastPageParam) => {
+        if (lastPage.length === 0) {
+          return undefined;
+        }
+        return lastPageParam + 1;
+      },
+    });
 
   useEffect(() => {
-    if (entry?.isIntersecting && hasNextPage) {
+    if (entry?.isIntersecting && hasNextPage && !isFetching) {
       fetchNextPage();
     }
-  }, [entry, fetchNextPage, hasNextPage]);
+  }, [entry, fetchNextPage, hasNextPage, isFetching]);
 
   const posts = data?.pages.flat() ?? [];
 
-  return { ref, posts };
+  return { ref, posts, isFetchingNextPage };
 };

@@ -5,6 +5,7 @@ import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
 import { PrismaPostAllArrayValidator } from "@/lib/validators/post";
 import { postQueryKeys } from "@/lib/postQuery";
 import { useInfiniteFeed } from "@/hooks/use-infinite-feed";
+import FeedLoading from "./FeedLoading";
 
 const PostCommentsFeed = ({
   authUserId,
@@ -13,7 +14,7 @@ const PostCommentsFeed = ({
   authUserId: string;
   replyToId: string;
 }) => {
-  const { ref, posts } = useInfiniteFeed({
+  const { ref, posts, isFetchingNextPage } = useInfiniteFeed({
     queryKey: postQueryKeys.postComments(authUserId, replyToId),
     mainQueryFn: async (pageParam) => {
       const query = `/api/post/${replyToId}/replies?limit=${INFINITE_SCROLLING_PAGINATION_RESULTS}&page=${pageParam}`;
@@ -31,6 +32,7 @@ const PostCommentsFeed = ({
           </li>
         );
       })}
+      {isFetchingNextPage && <FeedLoading />}
     </ul>
   );
 };

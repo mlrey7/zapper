@@ -1,5 +1,6 @@
 "use client";
 
+import FeedLoading from "@/components/FeedLoading";
 import PostDisplayClient from "@/components/postDisplay/PostDisplayClient";
 import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
 import { useInfiniteFeed } from "@/hooks/use-infinite-feed";
@@ -13,7 +14,7 @@ const UserLikes = ({
   authUserId: string;
   userId: string;
 }) => {
-  const { ref, posts } = useInfiniteFeed({
+  const { ref, posts, isFetchingNextPage } = useInfiniteFeed({
     queryKey: postQueryKeys.userLikes(authUserId, userId),
     mainQueryFn: async (pageParam) => {
       const query = `/api/user/${userId}/likes?limit=${INFINITE_SCROLLING_PAGINATION_RESULTS}&page=${pageParam}`;
@@ -31,6 +32,7 @@ const UserLikes = ({
           </li>
         );
       })}
+      {isFetchingNextPage && <FeedLoading />}
     </ul>
   );
 };
