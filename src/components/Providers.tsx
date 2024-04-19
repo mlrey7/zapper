@@ -1,5 +1,6 @@
 "use client";
 
+import { STALE_TIME } from "@/config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
 
@@ -7,7 +8,7 @@ function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 20 * 1000,
+        staleTime: STALE_TIME,
       },
     },
   });

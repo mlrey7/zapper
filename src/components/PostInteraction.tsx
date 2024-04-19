@@ -10,7 +10,6 @@ import {
   Upload,
 } from "lucide-react";
 import { Button } from "./ui/button";
-import { startTransition, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { PostLikeRequest } from "@/lib/validators/like";
@@ -44,15 +43,6 @@ const PostInteraction = ({ postId }: PostInteractionProps) => {
       const like = await data.json();
       return !!like;
     },
-    // initialData: () => {
-    //   const userId = "sdfsd";
-
-    //   return !!(
-    //     queryClient.getQueryData(["get-posts-infinite", userId]).currentLike ||
-    //     queryClient.getQueryData(["get-user-posts-infinite", userId]).currentLike ||
-    //     queryClient.getQueryData(["get-replies-infinite", postId]).currentLike
-    //   );
-    // },
   });
 
   const { data: currentRetweet } = useQuery({
@@ -122,9 +112,6 @@ const PostInteraction = ({ postId }: PostInteractionProps) => {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["currentLike", postId] });
       queryClient.invalidateQueries({ queryKey: ["postMetrics", postId] });
-      // startTransition(() => {
-      //   router.refresh();
-      // });
     },
   });
 
@@ -173,9 +160,6 @@ const PostInteraction = ({ postId }: PostInteractionProps) => {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["currentLike", postId] });
       queryClient.invalidateQueries({ queryKey: ["postMetrics", postId] });
-      // startTransition(() => {
-      //   router.refresh();
-      // });
     },
   });
 
@@ -231,10 +215,6 @@ const PostInteraction = ({ postId }: PostInteractionProps) => {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["currentRetweet", postId] });
       queryClient.invalidateQueries({ queryKey: ["postMetrics", postId] });
-
-      // startTransition(() => {
-      //   router.refresh();
-      // });
 
       return toast({
         title: "Success",

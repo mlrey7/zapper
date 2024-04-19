@@ -6,7 +6,6 @@ import PostDisplayClient from "./postDisplay/PostDisplayClient";
 import { PrismaPostAllArrayValidator } from "@/lib/validators/post";
 import { postQueryKeys } from "@/lib/postQuery";
 import { useInfiniteFeed } from "@/hooks/use-infinite-feed";
-import { Loader2 } from "lucide-react";
 import FeedLoading from "./FeedLoading";
 
 const PostFeedClient = ({

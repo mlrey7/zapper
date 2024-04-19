@@ -26,8 +26,6 @@ export async function GET(req: Request) {
         limit: url.searchParams.get("limit"),
       });
 
-    console.log(limit, page, feedType);
-
     let where: Prisma.PostWhereInput = { replyToId: null };
 
     if (feedType === "following") {
