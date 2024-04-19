@@ -16,12 +16,14 @@ interface PostDisplayClientProps {
   post: PostAndAuthorAll;
   className?: string;
   connected?: boolean;
+  authUserId: string;
 }
 
 const PostDisplayClient = ({
   post,
   className,
   connected,
+  authUserId,
 }: PostDisplayClientProps) => {
   const router = useRouter();
 
@@ -117,7 +119,7 @@ const PostDisplayClient = ({
             <EmbeddedPost className="mt-4" embeddedPost={quotedPost} />
           )}
           <div className="mt-3">
-            <PostInteraction postId={activePost.id} />
+            <PostInteraction postId={activePost.id} authUserId={authUserId} />
           </div>
         </div>
       </div>

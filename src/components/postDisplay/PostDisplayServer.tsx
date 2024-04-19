@@ -9,6 +9,7 @@ import {
   QueryClient,
   dehydrate,
 } from "@tanstack/react-query";
+import { postQueryKeys } from "@/lib/postQuery";
 
 interface PostDisplayServerProps {
   post: PostAndAuthorAll;
@@ -27,28 +28,6 @@ const PostDisplayServer = async ({
   if (!session) return null;
   if (!postContent.success) return null;
 
-  const getCurrentLike = async (postId: string) => {
-    const currentLike = await db.like.findFirst({
-      where: {
-        postId,
-        userId: session.user.id,
-      },
-    });
-
-    return !!currentLike;
-  };
-
-  const getCurrentRetweet = async (postId: string) => {
-    const currentRetweet = await db.post.findFirst({
-      where: {
-        quoteToId: postId,
-        authorId: session.user.id,
-      },
-    });
-
-    return !!currentRetweet;
-  };
-
   const quotedPost = post.quoteTo;
 
   const isRetweetPost =
@@ -61,18 +40,42 @@ const PostDisplayServer = async ({
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ["currentLike", activePost.id],
-    queryFn: async () => getCurrentLike(activePost.id),
+    queryKey: postQueryKeys.detailPostCurrentLike(
+      activePost.id,
+      session.user.id,
+    ),
+    queryFn: async () => {
+      const currentLike = await db.like.findFirst({
+        where: {
+          postId: activePost.id,
+          userId: session.user.id,
+        },
+      });
+
+      return !!currentLike;
+    },
   });
 
   await queryClient.prefetchQuery({
-    queryKey: ["currentRetweet", activePost.id],
-    queryFn: async () => getCurrentRetweet(activePost.id),
+    queryKey: postQueryKeys.detailPostCurrentRetweet(
+      activePost.id,
+      session.user.id,
+    ),
+    queryFn: async () => {
+      const currentRetweet = await db.post.findFirst({
+        where: {
+          quoteToId: activePost.id,
+          authorId: session.user.id,
+        },
+      });
+
+      return !!currentRetweet;
+    },
   });
 
   if (activePost.postMetrics) {
     queryClient.setQueryData(
-      ["postMetrics", activePost.id],
+      postQueryKeys.detailPostMetrics(activePost.id, session.user.id),
       activePost.postMetrics,
     );
   }
@@ -83,6 +86,7 @@ const PostDisplayServer = async ({
         post={post}
         className={className}
         connected={connected}
+        authUserId={session.user.id}
       />
     </HydrationBoundary>
   );

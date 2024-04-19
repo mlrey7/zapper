@@ -28,14 +28,20 @@ const PostFeed = async () => {
       });
 
       postsWithLikesAndRetweets.forEach((post) => {
-        queryClient.setQueryData(["currentLike", post.id], post.currentLike);
+        queryClient.setQueryData(
+          postQueryKeys.detailPostCurrentLike(post.id, session.user.id),
+          post.currentLike,
+        );
 
         queryClient.setQueryData(
-          ["currentRetweet", post.id],
+          postQueryKeys.detailPostCurrentRetweet(post.id, session.user.id),
           post.currentRetweet,
         );
 
-        queryClient.setQueryData(["postMetrics", post.id], post.postMetrics);
+        queryClient.setQueryData(
+          postQueryKeys.detailPostMetrics(post.id, session.user.id),
+          post.postMetrics,
+        );
       });
 
       return postsWithLikesAndRetweets;

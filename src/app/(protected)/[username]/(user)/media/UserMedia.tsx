@@ -24,6 +24,7 @@ const UserMedia = ({
       const data = await fetch(query);
       return PrismaPostAllArrayValidator.parse(await data.json());
     },
+    authUserId,
   });
 
   const flattenedPosts = posts.flatMap((post) => {

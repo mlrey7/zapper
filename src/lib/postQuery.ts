@@ -53,4 +53,21 @@ export const postQueryKeys = {
     { authUserId },
     { replyToId },
   ],
+  detail: () => [...postQueryKeys.all(), "detail"],
+  detailPost: (postId: string) => [...postQueryKeys.detail(), { postId }],
+  detailPostCurrentLike: (postId: string, authUserId: string) => [
+    ...postQueryKeys.detailPost(postId),
+    "current-like",
+    { authUserId },
+  ],
+  detailPostCurrentRetweet: (postId: string, authUserId: string) => [
+    ...postQueryKeys.detailPost(postId),
+    "current-retweet",
+    { authUserId },
+  ],
+  detailPostMetrics: (postId: string, authUserId: string) => [
+    ...postQueryKeys.detailPost(postId),
+    "post-metrics",
+    { authUserId },
+  ],
 };

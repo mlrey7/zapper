@@ -49,14 +49,20 @@ const prefetchUserReplies = async (
       });
 
       postsWithLikesAndRetweets.forEach((post) => {
-        queryClient.setQueryData(["currentLike", post.id], post.currentLike);
+        queryClient.setQueryData(
+          postQueryKeys.detailPostCurrentLike(post.id, authUserId),
+          post.currentLike,
+        );
 
         queryClient.setQueryData(
-          ["currentRetweet", post.id],
+          postQueryKeys.detailPostCurrentRetweet(post.id, authUserId),
           post.currentRetweet,
         );
 
-        queryClient.setQueryData(["postMetrics", post.id], post.postMetrics);
+        queryClient.setQueryData(
+          postQueryKeys.detailPostMetrics(post.id, authUserId),
+          post.postMetrics,
+        );
       });
 
       return postsWithLikesAndRetweets;

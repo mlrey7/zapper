@@ -22,6 +22,7 @@ const PostFeedClient = ({
       const data = await fetch(query);
       return PrismaPostAllArrayValidator.parse(await data.json());
     },
+    authUserId,
   });
 
   return (
@@ -29,7 +30,7 @@ const PostFeedClient = ({
       {...posts.map((post, index) => {
         return (
           <li key={post.id} ref={index === posts.length - 1 ? ref : null}>
-            <PostDisplayClient post={post} />
+            <PostDisplayClient post={post} authUserId={authUserId} />
           </li>
         );
       })}

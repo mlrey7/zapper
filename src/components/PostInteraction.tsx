@@ -27,17 +27,19 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { PostMetrics } from "@prisma/client";
+import { postQueryKeys } from "@/lib/postQuery";
 
 interface PostInteractionProps {
   postId: string;
+  authUserId: string;
 }
 
-const PostInteraction = ({ postId }: PostInteractionProps) => {
+const PostInteraction = ({ postId, authUserId }: PostInteractionProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
   const { data: currentLike } = useQuery({
-    queryKey: ["currentLike", postId],
+    queryKey: postQueryKeys.detailPostCurrentLike(postId, authUserId),
     queryFn: async () => {
       const data = await fetch(`/api/post/${postId}/currentLike`);
       const like = await data.json();
@@ -46,7 +48,7 @@ const PostInteraction = ({ postId }: PostInteractionProps) => {
   });
 
   const { data: currentRetweet } = useQuery({
-    queryKey: ["currentRetweet", postId],
+    queryKey: postQueryKeys.detailPostCurrentRetweet(postId, authUserId),
     queryFn: async () => {
       const data = await fetch(`/api/post/${postId}/currentRetweet`);
       const retweet = await data.json();
@@ -55,7 +57,7 @@ const PostInteraction = ({ postId }: PostInteractionProps) => {
   });
 
   const { data: postMetrics } = useQuery({
-    queryKey: ["postMetrics", postId],
+    queryKey: postQueryKeys.detailPostMetrics(postId, authUserId),
     queryFn: async () => {
       const data = await fetch(`/api/post/${postId}/postMetrics`);
       const postMetrics = await data.json();
@@ -76,15 +78,19 @@ const PostInteraction = ({ postId }: PostInteractionProps) => {
       await axios.patch("/api/post/like", payload);
     },
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ["currentLike", postId] });
-      queryClient.setQueryData(["currentLike", postId], () => true);
-
-      const previousPostMetrics = queryClient.getQueryData([
-        "postMetrics",
-        postId,
-      ]);
+      await queryClient.cancelQueries({
+        queryKey: postQueryKeys.detailPostCurrentLike(postId, authUserId),
+      });
       queryClient.setQueryData(
-        ["postMetrics", postId],
+        postQueryKeys.detailPostCurrentLike(postId, authUserId),
+        () => true,
+      );
+
+      const previousPostMetrics = queryClient.getQueryData(
+        postQueryKeys.detailPostMetrics(postId, authUserId),
+      );
+      queryClient.setQueryData(
+        postQueryKeys.detailPostMetrics(postId, authUserId),
         (oldPostMetrics: PostMetrics) => {
           return {
             ...oldPostMetrics,
@@ -96,10 +102,13 @@ const PostInteraction = ({ postId }: PostInteractionProps) => {
       return { previousPostMetrics };
     },
     onError: (err, _, context) => {
-      queryClient.setQueryData(["currentLike", postId], false);
+      queryClient.setQueryData(
+        postQueryKeys.detailPostCurrentLike(postId, authUserId),
+        false,
+      );
 
       queryClient.setQueryData(
-        ["postMetrics", postId],
+        postQueryKeys.detailPostMetrics(postId, authUserId),
         context?.previousPostMetrics,
       );
 
@@ -110,8 +119,12 @@ const PostInteraction = ({ postId }: PostInteractionProps) => {
       });
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["currentLike", postId] });
-      queryClient.invalidateQueries({ queryKey: ["postMetrics", postId] });
+      queryClient.invalidateQueries({
+        queryKey: postQueryKeys.detailPostCurrentLike(postId, authUserId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: postQueryKeys.detailPostMetrics(postId, authUserId),
+      });
     },
   });
 
@@ -124,15 +137,19 @@ const PostInteraction = ({ postId }: PostInteractionProps) => {
       await axios.patch("/api/post/unlike", payload);
     },
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ["currentLike", postId] });
-      queryClient.setQueryData(["currentLike", postId], () => false);
-
-      const previousPostMetrics = queryClient.getQueryData([
-        "postMetrics",
-        postId,
-      ]);
+      await queryClient.cancelQueries({
+        queryKey: postQueryKeys.detailPostCurrentLike(postId, authUserId),
+      });
       queryClient.setQueryData(
-        ["postMetrics", postId],
+        postQueryKeys.detailPostCurrentLike(postId, authUserId),
+        () => false,
+      );
+
+      const previousPostMetrics = queryClient.getQueryData(
+        postQueryKeys.detailPostMetrics(postId, authUserId),
+      );
+      queryClient.setQueryData(
+        postQueryKeys.detailPostMetrics(postId, authUserId),
         (oldPostMetrics: PostMetrics) => {
           return {
             ...oldPostMetrics,
@@ -144,10 +161,13 @@ const PostInteraction = ({ postId }: PostInteractionProps) => {
       return { previousPostMetrics };
     },
     onError: (err, _, context) => {
-      queryClient.setQueryData(["currentLike", postId], true);
+      queryClient.setQueryData(
+        postQueryKeys.detailPostCurrentLike(postId, authUserId),
+        true,
+      );
 
       queryClient.setQueryData(
-        ["postMetrics", postId],
+        postQueryKeys.detailPostMetrics(postId, authUserId),
         context?.previousPostMetrics,
       );
 
@@ -158,8 +178,12 @@ const PostInteraction = ({ postId }: PostInteractionProps) => {
       });
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["currentLike", postId] });
-      queryClient.invalidateQueries({ queryKey: ["postMetrics", postId] });
+      queryClient.invalidateQueries({
+        queryKey: postQueryKeys.detailPostCurrentLike(postId, authUserId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: postQueryKeys.detailPostMetrics(postId, authUserId),
+      });
     },
   });
 
@@ -179,15 +203,19 @@ const PostInteraction = ({ postId }: PostInteractionProps) => {
       return data;
     },
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ["currentRetweet", postId] });
-      queryClient.setQueryData(["currentRetweet", postId], () => true);
-
-      const previousPostMetrics = queryClient.getQueryData([
-        "postMetrics",
-        postId,
-      ]);
+      await queryClient.cancelQueries({
+        queryKey: postQueryKeys.detailPostCurrentRetweet(postId, authUserId),
+      });
       queryClient.setQueryData(
-        ["postMetrics", postId],
+        postQueryKeys.detailPostCurrentRetweet(postId, authUserId),
+        () => true,
+      );
+
+      const previousPostMetrics = queryClient.getQueryData(
+        postQueryKeys.detailPostMetrics(postId, authUserId),
+      );
+      queryClient.setQueryData(
+        postQueryKeys.detailPostMetrics(postId, authUserId),
         (oldPostMetrics: PostMetrics) => {
           return {
             ...oldPostMetrics,
@@ -199,10 +227,13 @@ const PostInteraction = ({ postId }: PostInteractionProps) => {
       return { previousPostMetrics };
     },
     onError: (err, _, context) => {
-      queryClient.setQueryData(["currentRetweet", postId], () => false);
+      queryClient.setQueryData(
+        postQueryKeys.detailPostCurrentRetweet(postId, authUserId),
+        () => false,
+      );
 
       queryClient.setQueryData(
-        ["postMetrics", postId],
+        postQueryKeys.detailPostMetrics(postId, authUserId),
         context?.previousPostMetrics,
       );
 
@@ -213,8 +244,12 @@ const PostInteraction = ({ postId }: PostInteractionProps) => {
       });
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["currentRetweet", postId] });
-      queryClient.invalidateQueries({ queryKey: ["postMetrics", postId] });
+      queryClient.invalidateQueries({
+        queryKey: postQueryKeys.detailPostCurrentRetweet(postId, authUserId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: postQueryKeys.detailPostMetrics(postId, authUserId),
+      });
 
       return toast({
         title: "Success",

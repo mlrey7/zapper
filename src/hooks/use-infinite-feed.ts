@@ -1,5 +1,6 @@
 "use client";
 
+import { postQueryKeys } from "@/lib/postQuery";
 import { PrismaPostAllType } from "@/lib/validators/post";
 import { useIntersection } from "@mantine/hooks";
 import {
@@ -12,9 +13,11 @@ import { useEffect } from "react";
 export const useInfiniteFeed = ({
   queryKey,
   mainQueryFn,
+  authUserId,
 }: {
   queryKey: QueryKey;
   mainQueryFn: (pageParam: number) => Promise<Array<PrismaPostAllType>>;
+  authUserId: string;
 }) => {
   const { ref, entry } = useIntersection({
     root: null,
@@ -30,14 +33,20 @@ export const useInfiniteFeed = ({
         const posts = await mainQueryFn(pageParam);
 
         posts.forEach((post) => {
-          queryClient.setQueryData(["currentLike", post.id], post.currentLike);
+          queryClient.setQueryData(
+            postQueryKeys.detailPostCurrentLike(post.id, authUserId),
+            post.currentLike,
+          );
 
           queryClient.setQueryData(
-            ["currentRetweet", post.id],
+            postQueryKeys.detailPostCurrentRetweet(post.id, authUserId),
             post.currentRetweet,
           );
 
-          queryClient.setQueryData(["postMetrics", post.id], post.postMetrics);
+          queryClient.setQueryData(
+            postQueryKeys.detailPostMetrics(post.id, authUserId),
+            post.postMetrics,
+          );
         });
 
         return posts;

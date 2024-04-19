@@ -17,6 +17,7 @@ interface PostDetailClientProps {
   user: Pick<User, "name" | "username" | "image">;
   connected: boolean;
   showImages: boolean;
+  authUserId: string;
 }
 
 const PostDetailClient = ({
@@ -25,6 +26,7 @@ const PostDetailClient = ({
   user,
   connected,
   showImages,
+  authUserId,
 }: PostDetailClientProps) => {
   return (
     <div className={cn("border-b px-4 py-3", { "pt-0": connected })}>
@@ -69,7 +71,7 @@ const PostDetailClient = ({
           </div>
 
           <div className="-mt-3 border-b py-1">
-            <PostInteraction postId={post.id} />
+            <PostInteraction postId={post.id} authUserId={authUserId} />
           </div>
           <CreateComment
             user={{
