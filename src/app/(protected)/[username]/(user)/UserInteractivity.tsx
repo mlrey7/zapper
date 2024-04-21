@@ -23,7 +23,6 @@ const UserInteractivity = ({
 
   const { mutate: follow } = useMutation({
     mutationFn: async () => {
-      console.log("Following request");
       const payload: UserFollowRequest = {
         followingId,
       };
@@ -49,7 +48,6 @@ const UserInteractivity = ({
 
   const { mutate: unfollow } = useMutation({
     mutationFn: async () => {
-      console.log("Following request");
       const payload: UserFollowRequest = {
         followingId,
       };

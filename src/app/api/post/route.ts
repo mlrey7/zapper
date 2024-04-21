@@ -40,11 +40,8 @@ export async function GET(req: Request) {
       });
 
       if (!user) throw new Error("Current user not found");
-      console.log("Following object: ", user.following);
-      console.log("Followed by object: ", user.followedBy);
-
       const following = user.following.map((f) => f.followingId);
-      console.log("FOLLOWING: ", following);
+
       where = {
         ...where,
         authorId: {
