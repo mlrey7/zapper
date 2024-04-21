@@ -1,21 +1,20 @@
 "use client";
 
 import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
-import { FeedStatusType } from "@/types/feed";
 import PostDisplayClient from "./postDisplay/PostDisplayClient";
 import { PrismaPostAllArrayValidator } from "@/lib/validators/post";
 import { postQueryKeys } from "@/lib/postQuery";
 import { useInfiniteFeed } from "@/hooks/use-infinite-feed";
 import FeedLoading from "./FeedLoading";
+import { useFeedStatus } from "./FeedStatusProvider";
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
-const PostFeedClient = ({
-  authUserId,
-  feedType = "all",
-}: {
-  authUserId: string;
-  feedType?: FeedStatusType;
-}) => {
-  const { ref, posts, isFetchingNextPage } = useInfiniteFeed({
+const PostFeedClient = ({ authUserId }: { authUserId: string }) => {
+  const feedType = useFeedStatus()((state) => state.feedStatus);
+  const queryClient = useQueryClient();
+
+  const { ref, posts, isFetchingNextPage, isPending } = useInfiniteFeed({
     queryKey: postQueryKeys.userFeed(authUserId, { feedType }),
     mainQueryFn: async (pageParam) => {
       const query = `/api/post?limit=${INFINITE_SCROLLING_PAGINATION_RESULTS}&page=${pageParam}&feedType=${feedType}`;
@@ -25,17 +24,31 @@ const PostFeedClient = ({
     authUserId,
   });
 
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: [...postQueryKeys.userFeed(authUserId, { feedType })],
+    });
+  }, [feedType, authUserId, queryClient]);
+
   return (
-    <ul className="flex w-full flex-col">
-      {...posts.map((post, index) => {
-        return (
-          <li key={post.id} ref={index === posts.length - 1 ? ref : null}>
-            <PostDisplayClient post={post} authUserId={authUserId} />
-          </li>
-        );
-      })}
-      {isFetchingNextPage && <FeedLoading />}
-    </ul>
+    <>
+      {isPending ? (
+        <ul className="flex justify-center">
+          <FeedLoading />
+        </ul>
+      ) : (
+        <ul className="flex w-full flex-col">
+          {...posts.map((post, index) => {
+            return (
+              <li key={post.id} ref={index === posts.length - 1 ? ref : null}>
+                <PostDisplayClient post={post} authUserId={authUserId} />
+              </li>
+            );
+          })}
+          {isFetchingNextPage && <FeedLoading />}
+        </ul>
+      )}
+    </>
   );
 };
 

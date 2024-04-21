@@ -26,39 +26,46 @@ export const useInfiniteFeed = ({
 
   const queryClient = useQueryClient();
 
-  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
-    useInfiniteQuery({
-      queryKey,
-      queryFn: async ({ pageParam }) => {
-        const posts = await mainQueryFn(pageParam);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    refetch,
+    isPending,
+  } = useInfiniteQuery({
+    queryKey,
+    queryFn: async ({ pageParam }) => {
+      const posts = await mainQueryFn(pageParam);
 
-        posts.forEach((post) => {
-          queryClient.setQueryData(
-            postQueryKeys.detailPostCurrentLike(post.id, authUserId),
-            post.currentLike,
-          );
+      posts.forEach((post) => {
+        queryClient.setQueryData(
+          postQueryKeys.detailPostCurrentLike(post.id, authUserId),
+          post.currentLike,
+        );
 
-          queryClient.setQueryData(
-            postQueryKeys.detailPostCurrentRetweet(post.id, authUserId),
-            post.currentRetweet,
-          );
+        queryClient.setQueryData(
+          postQueryKeys.detailPostCurrentRetweet(post.id, authUserId),
+          post.currentRetweet,
+        );
 
-          queryClient.setQueryData(
-            postQueryKeys.detailPostMetrics(post.id, authUserId),
-            post.postMetrics,
-          );
-        });
+        queryClient.setQueryData(
+          postQueryKeys.detailPostMetrics(post.id, authUserId),
+          post.postMetrics,
+        );
+      });
 
-        return posts;
-      },
-      initialPageParam: 1,
-      getNextPageParam: (lastPage, _, lastPageParam) => {
-        if (lastPage.length === 0) {
-          return undefined;
-        }
-        return lastPageParam + 1;
-      },
-    });
+      return posts;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _, lastPageParam) => {
+      if (lastPage.length === 0) {
+        return undefined;
+      }
+      return lastPageParam + 1;
+    },
+  });
 
   useEffect(() => {
     if (entry?.isIntersecting && hasNextPage && !isFetching) {
@@ -68,5 +75,5 @@ export const useInfiniteFeed = ({
 
   const posts = data?.pages.flat() ?? [];
 
-  return { ref, posts, isFetchingNextPage };
+  return { ref, posts, isFetchingNextPage, refetch, isFetching, isPending };
 };

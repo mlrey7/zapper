@@ -2,12 +2,11 @@
 
 import { Settings } from "lucide-react";
 import { Button, buttonVariants } from "./ui/button";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { FeedStatusType } from "@/types/feed";
+import { useFeedStatus } from "./FeedStatusProvider";
 
 const FeedSwitch = () => {
-  const [feedStatus, setFeedStatus] = useState<FeedStatusType>("all");
+  const { feedStatus, setFeedStatus } = useFeedStatus()();
 
   return (
     <div className="flex h-full w-full items-center border-b">

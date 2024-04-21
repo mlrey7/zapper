@@ -1,3 +1,4 @@
+import FeedStatusProvider from "@/components/FeedStatusProvider";
 import { NavbarCSR } from "@/components/navBar/NavBarCSR";
 import Sidebar from "@/components/Sidebar";
 import { getAuthSession } from "@/lib/auth";
@@ -20,7 +21,7 @@ const Layout = async ({
   if (!session) redirect("/");
 
   return (
-    <>
+    <FeedStatusProvider>
       {postImageDetail}
       <div className="container fixed inset-x-0 z-20 grid grid-cols-12">
         <div className="pointer-events-none col-span-3 w-full" />
@@ -40,7 +41,7 @@ const Layout = async ({
           <Sidebar />
         </div>
       </div>
-    </>
+    </FeedStatusProvider>
   );
 };
 
