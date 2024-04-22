@@ -72,7 +72,12 @@ const UserInteractivity = ({
   });
 
   return isCurrentUser ? (
-    <Button variant={"outline"} onClick={() => {}}>
+    <Button
+      variant={"outline"}
+      onClick={() => {
+        router.push("/settings/profile");
+      }}
+    >
       Edit profile
     </Button>
   ) : isFollowing ? (
