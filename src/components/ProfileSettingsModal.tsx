@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useClickOutside } from "@mantine/hooks";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PrismaUserType, UserProfileValidator } from "@/lib/validators/user";
 import Image from "next/image";
 import { Button, buttonVariants } from "./ui/button";
@@ -33,6 +33,18 @@ const ProfileSettingsModal = ({
   const [localCoverImage, setLocalCoverImage] = useState("");
   const [localImage, setLocalImage] = useState("");
 
+  const queryClient = useQueryClient();
+
+  const { data: user } = useQuery({
+    queryKey: ["user", "settings", "profile", userId],
+    queryFn: async () => {
+      const data = await fetch(`/api/user/${userId}/profile`);
+      const profile = await data.json();
+      return UserProfileValidator.parse(profile);
+    },
+    initialData: initialProfileSettings,
+  });
+
   const {
     handleSubmit,
     setValue: setFormValue,
@@ -40,7 +52,7 @@ const ProfileSettingsModal = ({
     control,
   } = useForm<PrismaUserType>({
     resolver: zodResolver(UserProfileValidator),
-    defaultValues: initialProfileSettings,
+    defaultValues: user,
   });
 
   const { mutate: submitProfile } = useMutation({
@@ -53,7 +65,11 @@ const ProfileSettingsModal = ({
         },
       });
     },
-    onSuccess: () => {
+    onSuccess: async (data) => {
+      queryClient.setQueryData(
+        ["user", "settings", "profile", userId],
+        await data.json(),
+      );
       router.back();
     },
   });

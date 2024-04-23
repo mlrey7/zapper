@@ -55,7 +55,7 @@ export async function PATCH(
     const { bio, coverImage, image, location, name } =
       UserProfileValidator.parse(body);
 
-    await db.user.update({
+    const data = await db.user.update({
       where: {
         id: userId,
       },
@@ -68,7 +68,7 @@ export async function PATCH(
       },
     });
 
-    return new Response("Profile updated");
+    return Response.json(data);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response(error.message, { status: 422 });
