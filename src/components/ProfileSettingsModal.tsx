@@ -123,7 +123,7 @@ const ProfileSettingsModal = ({
 
   return (
     <div
-      className="relative mx-auto flex h-fit max-h-[600px] w-[600px] flex-col gap-2 overflow-y-scroll rounded-lg bg-background"
+      className="relative mx-auto flex h-fit max-h-[600px] w-[600px] flex-col gap-2 rounded-lg bg-background"
       ref={clickOutsideRef}
     >
       <div className="flex flex-col">
