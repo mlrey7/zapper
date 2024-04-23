@@ -1,14 +1,12 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useClickOutside } from "@mantine/hooks";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { PrismaUserType, UserProfileValidator } from "@/lib/validators/user";
-import UserAvatar from "./UserAvatar";
 import Image from "next/image";
 import { Button, buttonVariants } from "./ui/button";
 import { ImagePlus, Loader2, X } from "lucide-react";
-import { Input } from "./ui/input";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUploadThing } from "@/lib/uploadthing";
 import { toast } from "@/hooks/use-toast";
@@ -16,6 +14,7 @@ import { useRef, useState } from "react";
 import { generateMimeTypes } from "uploadthing/client";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Icons } from "./Icons";
+import { IftaInput } from "./IftaInput";
 
 const ProfileSettingsModal = ({
   initialProfileSettings,
@@ -35,23 +34,13 @@ const ProfileSettingsModal = ({
   const [localImage, setLocalImage] = useState("");
 
   const {
-    register,
     handleSubmit,
     setValue: setFormValue,
     watch,
+    control,
   } = useForm<PrismaUserType>({
     resolver: zodResolver(UserProfileValidator),
     defaultValues: initialProfileSettings,
-  });
-
-  const { data: user } = useQuery({
-    queryKey: ["user", "settings", "profile", userId],
-    queryFn: async () => {
-      const data = await fetch(`/api/user/${userId}/profile`);
-      const profile = await data.json();
-      return UserProfileValidator.parse(profile);
-    },
-    initialData: initialProfileSettings,
   });
 
   const { mutate: submitProfile } = useMutation({
@@ -265,10 +254,23 @@ const ProfileSettingsModal = ({
             className="mt-14 flex flex-col gap-4"
             onSubmit={handleSubmit(onSubmit)}
             id="profileForm"
+            autoComplete="off"
           >
-            <Input placeholder="Name" {...register("name")} />
-            <Input placeholder="Bio" {...register("bio")} />
-            <Input placeholder="Location" {...register("location")} />
+            <Controller
+              control={control}
+              name="name"
+              render={({ field }) => <IftaInput label="Name" {...field} />}
+            />
+            <Controller
+              control={control}
+              name="bio"
+              render={({ field }) => <IftaInput label="Bio" {...field} />}
+            />
+            <Controller
+              control={control}
+              name="location"
+              render={({ field }) => <IftaInput label="Location" {...field} />}
+            />
           </form>
         </div>
       </div>
