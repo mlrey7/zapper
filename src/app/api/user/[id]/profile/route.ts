@@ -9,14 +9,14 @@ export async function GET(
 ) {
   const session = await getAuthSession();
 
-  if (!session?.user || session.user.id !== userId) {
+  if (!session?.user) {
     return new Response("Unauthorized", { status: 401 });
   }
 
   try {
     const userProfile = await db.user.findUnique({
       where: {
-        id: session.user.id,
+        id: userId,
       },
       select: {
         id: true,

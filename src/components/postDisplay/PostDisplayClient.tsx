@@ -11,6 +11,12 @@ import PostDisplayMoreOptions from "./PostDisplayMoreOptions";
 import { useRouter } from "next/navigation";
 import EmbeddedPost from "../EmbeddedPost";
 import { Repeat } from "lucide-react";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "../ui/hover-card";
+import ProfileCard from "../ProfileCard";
 
 interface PostDisplayClientProps {
   post: PostAndAuthorAll;
@@ -80,13 +86,23 @@ const PostDisplayClient = ({
 
       <div className="flex items-start gap-3 ">
         <div className="flex flex-col items-center self-stretch">
-          <UserAvatar
-            user={activePost.author}
-            onClick={(e: React.MouseEvent) => {
-              e.stopPropagation();
-              router.push(`/${activePost.author.username}`);
-            }}
-          />
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <UserAvatar
+                user={activePost.author}
+                onClick={(e: React.MouseEvent) => {
+                  e.stopPropagation();
+                  router.push(`/${activePost.author.username}`);
+                }}
+              />
+            </HoverCardTrigger>
+            {activePost.authorId !== authUserId && (
+              <HoverCardContent className="w-80">
+                <ProfileCard userId={activePost.authorId} />
+              </HoverCardContent>
+            )}
+          </HoverCard>
+
           {connected && <div className="mt-1 w-[2px] flex-1 bg-gray-600" />}
         </div>
 
